@@ -50,6 +50,16 @@ Według danych ze zbioru taka teza jest nieprawdziwa, jednak liczba filmów z wy
 więc mimo tego, że takie ograniczenie nie wpływa na liczbę odsłon to mała ilość takich filmów może sugerować, że nie są
 one zbyt chętnie brane do zakładki Trendings.
 
+Ostatnią obserwacją jest przedstawienie macierzy korelacji. Wynika z niej dodatnia korelacja między kilkoma grupami atrybutów.
+Pierwszą grupę stanowią atrybuty: 'views', 'likes', 'dislikes' oraz 'comment_count'. Jest to dosyć zrozumiałe, gdyż logicznym
+wydaje się, że jeśli film będzie miał więcej odsłon to więcej użytkowników go oceni oraz skomentuje. Drugą grupą skorelowaną są atrybuty:
+'comments_disabled' oraz 'ratings_disabled', co oznacza że jeśli komentowanie jest wyłączone to ocenianie również. Z macierzy można też
+zaobserwować fakt, że filmy które mają dużo tagów, częściej mają też dużo linków w opisie. Negatywną korelacją wykazują atrybuty 'publish_time_year'
+oraz 'days_from_publish_time_to_trending_date', co świadczy o tym, że filmy opublikowane wcześniej czekały dłużej na to, aby
+zaistnieć w zakładce Trendings. Jednak może mieć to związek z tym, że dany film pojawił się kilka razy w zakładce Trendings,
+a 'trending_date' to data ostatniego razu kiedy ten film się tam pojawił. Jeśli chodzi o grupy skorelowanych atrybutów, to z każdej
+takiej grupy do dalszego przetwarzania i uzyskiwania wiedzy będzie wybrany jeden z nich, aby taka grupa nie miała sztucznie zwiększonej wagi ważności.
+
 ### Wnioski
 Atrybuty, których nie da się wykorzystać:
 - 'video_id' - służy tylko jako ID video i nie da się nic z tego wywnioskować
