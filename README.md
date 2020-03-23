@@ -79,5 +79,5 @@ Atrybuty, których nie da się wykorzystać lub są nieprzydatne:
 W ogólności ciekawsze wnioski będzie można sformułować w momencie konfrontacji powyższych statystyk ze statystykami ze zbioru filmików niewystępujących na trending. Wówczas być może wyłonią się pewne różnice w filmikach z obu zbiorów danych. Na ten moment rozszerzona analiza nie jest aż tak istotna, gdyż nie wiemy jak ma się to do filmików niewystępujących na trending (analiza danej statystyki okaże się być stratą czasu, jeśli filmiki trending nie będą się nią odróżniały od nie-trending).
 
 ### Autorzy
-Adrian Kotarski 127346 
-Patryk Szczuczko 127215
+- Adrian Kotarski 127346 
+- Patryk Szczuczko 127215
