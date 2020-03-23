@@ -75,3 +75,9 @@ Atrybuty, których nie da się wykorzystać lub są nieprzydatne:
 - 'video_id' - służy tylko jako ID video i nie da się nic z tego wywnioskować
 - 'channel_title' - są to nazwy własne, często nazwiska, i nie ma sensu tego analizować
 - liczba wystąpień danych słów w jakichkolwiek łańcuchach znaków - youtube zawiera różnorodne filmiki, a słowa związane z nimi są ściśle powiązane z tematyką, którą obejmują, więc jeśli celem jest dostanie się do zakładki trendings, to zakładamy, że słowa związane z filmikiem będą naturalną implikacją jego treści, a nie losowym zlepkiem najczęściej występujących słów, z zupełnie innej kategorii.
+
+W ogólności ciekawsze wnioski będzie można sformułować w momencie konfrontacji powyższych statystyk ze statystykami ze zbioru filmików niewystępujących na trending. Wówczas być może wyłonią się pewne różnice w filmikach z obu zbiorów danych. Na ten moment rozszerzona analiza nie jest aż tak istotna, gdyż nie wiemy jak ma się to do filmików niewystępujących na trending (analiza danej statystyki okaże się być stratą czasu, jeśli filmiki trending nie będą się nią odróżniały od nie-trending).
+
+### Autorzy
+Adrian Kotarski 127346 
+Patryk Szczuczko 127215
