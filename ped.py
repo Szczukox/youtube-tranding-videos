@@ -122,6 +122,10 @@ for group in ['publish_time_month', 'category']:
         # Wypisanie statystyk zwizualizowanych na wcześniejszych wykresach
         print(data.groupby(group)[column].describe())
 
+# Wykres video z włączonymi komentarzami vs video z wyłączonymi komentarzami
+sns.countplot(x='comments_disabled', data=data)
+plt.show()
+
 for column in ['views', 'likes']:
     # Rysowanie wykresów pudełkowych dla wybranych atrybutów
     # bez obserwacji odstających - aby wykres był czytelniejszy
@@ -130,6 +134,10 @@ for column in ['views', 'likes']:
     plt.show()
     # Wypisanie statystyk zwizualizowanych na wcześniejszych wykresach
     print(data.groupby('comments_disabled')[column].describe())
+
+# Wykres video z włączonymi ocenami vs video z wyłączonymi ocenami
+sns.countplot(x='ratings_disabled', data=data)
+plt.show()
 
 for column in ['views', 'comment_count']:
     # Rysowanie wykresów pudełkowych dla wybranych atrybutów

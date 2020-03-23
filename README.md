@@ -19,6 +19,8 @@ zostały utworzone kolejne dwa atrybuty: rok (atrybut 'publish_time_year') oraz 
 wartości tych atrybutów i sprawdzeniu czy jest jakaś tendencja odnośnie popularności video w zależności
 od miesiąca opublikowania.
 
+Kolejnymi atrybutami, które są rozszerzeniami istniejących są: stosunek liczby like'ów, dislike'ów i komentarzy do liczby wyświetleń. Pozwala to określić jak duża część oglądających angażuje się w filmik, tj. czy dużo osób oglądających pokazuje jakąkolwiek reakcję, czy może jest to duża liczba wyświetleń przypadkowych osób, które "nabijają" tylko tę statystykę. Istniejące atrybuty w postaci surowej liczby wyświetleń/like'ów/dislike'ów/komentarzy też mogą być przydatne przy analizie, być może istnieją pewne progi, po których szansa na bycie filmiku w trending znacząco rośnie.
+
 Został utworzony również atrybut 'days_from_publish_time_to trending_date', którego wartość stanowi
 liczbę dni, które upłynęły od czasu opublikowania filmu, do czasu w którym film trafił do zakładki
 Trending (czyli jest to po prostu różnica między 'trending_date' a 'publish_time' wyrażona w dniach).
@@ -43,7 +45,10 @@ liczba filmów opublikowana w tym okresie również jest bardzo mała. Biorąc t
 opublikowanie filmu w okresie lipiec-październik, ma większe szanse na trafienie do zakładki Trending, nawet jeśli
 nie będzie miało zbyt dużej liczby wyświetleń, polubień czy komentarzy. Chociaż najbardziej prawdopodobny jest tutaj brak zbalansowania przykładów przypadających na dany miesiąc, tj. dataset został głównie zbudowany w oparciu o przykłady z pozostałych miesięcy.
 
-Kolejnymi atrybutami, które są rozszerzeniami istniejących są: stosunek liczby like'ów, dislike'ów i komentarzy do liczby wyświetleń. Pozwala to określić jak duża część oglądających angażuje się w filmik, tj. czy dużo osób oglądających pokazuje jakąkolwiek reakcję, czy może jest to duża liczba wyświetleń przypadkowych osób, które "nabijają" tylko tę statystykę. Istniejące atrybuty w postaci surowej liczby wyświetleń/like'ów/dislike'ów/komentarzy też mogą być przydatne przy analizie, być może istnieją pewne progi, po których szansa na bycie filmiku w trending znacząco rośnie.
+Sprawdziliśmy także, czy fakt wyłączenia możliwości komentowania lub oceny filmu wpływa negatywnie na jego liczbę odsłon.
+Według danych ze zbioru taka teza jest nieprawdziwa, jednak liczba filmów z wyłączoną opcją komentowania lub oceniania jest znikoma,
+więc mimo tego, że takie ograniczenie nie wpływa na liczbę odsłon to mała ilość takich filmów może sugerować, że nie są
+one zbyt chętnie brane do zakładki Trendings.
 
 ### Wnioski
 Atrybuty, których nie da się wykorzystać:
