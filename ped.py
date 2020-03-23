@@ -41,6 +41,11 @@ data = pd.concat([data_GB, data_US])
 # Zmiana nazwy atrybuty na poprawną (bez spacji na końcu)
 data = data.rename(columns={"description ": "description"})
 
+# Utworzenie nowych atrybutów na podstawie już obecnych
+data['likes_views_ratio'] = data['likes'] / data['views']
+data['dislikes_views_ratio'] = data['dislikes'] / data['views']
+data['comment_count_views_ratio'] = data['comment_count'] / data['views']
+
 # Dodanie atrybutów: długości tytułu oraz długości opisu
 data['title_length'] = data.apply(lambda row: len(row['title']), axis=1)
 data['description_length'] = data.apply(lambda row: len(str(row['description'])), axis=1)
