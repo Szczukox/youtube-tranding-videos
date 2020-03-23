@@ -41,7 +41,9 @@ Jeśli chodzi o popularność filmów w zależności od miesiąca w jakim zosta�
 że filmy opublikowane od lipca do października nie cieszą się dużą liczbą wyświetleń i polubień. Z drugiej strony,
 liczba filmów opublikowana w tym okresie również jest bardzo mała. Biorąc te dwie kwestię pod uwagę, być może
 opublikowanie filmu w okresie lipiec-październik, ma większe szanse na trafienie do zakładki Trending, nawet jeśli
-nie będzie miało zbyt dużej liczby wyświetleń, polubień czy komentarzy.
+nie będzie miało zbyt dużej liczby wyświetleń, polubień czy komentarzy. Chociaż najbardziej prawdopodobny jest tutaj brak zbalansowania przykładów przypadających na dany miesiąc, tj. dataset został głównie zbudowany w oparciu o przykłady z pozostałych miesięcy.
+
+Kolejnymi atrybutami, które są rozszerzeniami istniejących są: stosunek liczby like'ów, dislike'ów i komentarzy do liczby wyświetleń. Pozwala to określić jak duża część oglądających angażuje się w filmik, tj. czy dużo osób oglądających pokazuje jakąkolwiek reakcję, czy może jest to duża liczba wyświetleń przypadkowych osób, które "nabijają" tylko tę statystykę. Istniejące atrybuty w postaci surowej liczby wyświetleń/like'ów/dislike'ów/komentarzy też mogą być przydatne przy analizie, być może istnieją pewne progi, po których szansa na bycie filmiku w trending znacząco rośnie.
 
 ### Wnioski
 Atrybuty, których nie da się wykorzystać:
