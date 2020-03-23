@@ -1,7 +1,6 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-import math
 
 
 # Funkcja parsująca atrybut trending_date do struktury Timestamp
@@ -17,7 +16,15 @@ def tags_to_number_of_tags(tags):
 
 # Funkcja pomocnicza do wykresu liczba video z przypisaną kategorią vs liczba video bez przypisanej kategorii
 def value_vs_non_value_in_category_id(category_id):
-    return "No" if math.isnan(category_id) else "Yes"
+    return "No" if str(category_id) == "nan" else "Yes"
+
+
+# Funkcja wydobywająca nazwę kategorii video wraz z ID
+def extract_category_with_id_from_json_items(items):
+    items_str = str(items)
+    category_id = items_str[items_str.index("id\': \'") + 6:items_str.index("\', \'snippet")]
+    category = items_str[items_str.index("title\': \'") + 9:items_str.index("\', \'assignable")]
+    return int(category_id), category
 
 
 # Załadowanie danych z pliku
@@ -57,49 +64,41 @@ data['days_from_publish_time_to trending_date'] = data['days_from_publish_time_t
 data['number_of_tags'] = data['tags'].map(lambda tags: tags_to_number_of_tags(tags))
 data['number_of_links'] = data['description'].map(lambda description: str(description).count("http"))
 
-# Rysowanie wykresów pudełkowych interesujących atrybutów liczbowych (pierwszy wykres - całość danych, drugi wykres -
-# dane w podziale na kraj US lub GB)
-data.boxplot(column=['number_of_tags'])
-data.boxplot(by='country', column=['number_of_tags'])
-plt.suptitle('')
-plt.show()
+for column in ['number_of_tags', 'number_of_links', 'title_length', 'description_length']:
+    # Rysowanie wykresów pudełkowych interesujących atrybutów liczbowych (pierwszy wykres - całość danych, drugi wykres -
+    # dane w podziale na kraj US lub GB)
+    data.boxplot(column=[column])
+    data.boxplot(by='country', column=[column])
+    plt.suptitle('')
+    plt.show()
 
-data.boxplot(column=['number_of_links'])
-data.boxplot(by='country', column=['number_of_links'])
-plt.suptitle('')
-plt.show()
+    # Wypisanie statystyk zwizualizowanych na wcześniejszych wykresach pudełkowych
+    print(data[column].describe())
+    print(data.groupby('country')[column].describe())
 
-data.boxplot(column=['title_length'])
-data.boxplot(by='country', column=['title_length'])
-plt.suptitle('')
-plt.show()
+# Załadowanie pliku z opisem kategorii (zawartość pliku GB zawiera się w zawartości pliku US jeśli chodzi o przypisanie nazwy kategorii do ID)
+category_names = pd.read_json('US_category_id.json')
 
-data.boxplot(column=['description_length'])
-data.boxplot(by='country', column=['description_length'])
-plt.suptitle('')
-plt.show()
+# Przemapowanie ID kategorii na jej nazwę
+category_mapping = dict(
+    category_names['items'].map(lambda items: extract_category_with_id_from_json_items(items)).tolist())
+data['category_id'].replace(category_mapping, inplace=True)
 
-# Wypisanie statystyk zwizualizowanych na wcześniejszych wykresach pudełkowych
-print(data['number_of_tags'].describe())
-print(data['number_of_links'].describe())
-print(data['title_length'].describe())
-print(data['description_length'].describe())
-print(data.groupby('country')['number_of_tags'].describe())
-print(data.groupby('country')['number_of_links'].describe())
-print(data.groupby('country')['title_length'].describe())
-print(data.groupby('country')['description_length'].describe())
+# W związku z zastąpieniem ID kategorii przez jej nazwę to zmiana nazwy atrybutu
+data = data.rename(columns={"category_id": "category"})
 
 # Rysowanie wykresu obrazującego rozkład kategorii wśród video z przypisanymi kategoriami
-sns.countplot(x='category_id', data=data)
+category_count_plot = sns.countplot(x='category', data=data)
+category_count_plot.set_xticklabels(category_count_plot.get_xticklabels(), rotation=45, horizontalalignment='right')
 plt.show()
 
 # Rysowanie wykresu obrazującego porównanie liczby video z przypisaną kategorią do liczby video bez przypisanej kategorii
-value_count = data['category_id'].map(lambda category_id: value_vs_non_value_in_category_id(category_id)).value_counts()
-sns.barplot(value_count.index, value_count.values).set_title("Video has category ID")
+value_count = data['category'].map(lambda category_id: value_vs_non_value_in_category_id(category_id)).value_counts()
+sns.barplot(value_count.index, value_count.values).set_title("Video has category")
 plt.show()
 
 # Wypisanie statystyk odnośnie liczby video z daną kategorią (lub bez)
-print(data['category_id'].value_counts(dropna=False))
+print(data['category'].value_counts(dropna=False))
 
 # Rysowanie wykresu korelacji atrybutów
 correlation_matrix = data.corr()
