@@ -50,6 +50,17 @@ Według danych ze zbioru taka teza jest nieprawdziwa, jednak liczba filmów z wy
 więc mimo tego, że takie ograniczenie nie wpływa na liczbę odsłon to mała ilość takich filmów może sugerować, że nie są
 one zbyt chętnie brane do zakładki Trendings.
 
+Zdecydowaliśmy się też nie wykorzystywać zliczania słów w tytułach/opisach, jako że są one bezpośrednią implikacją treści filmiku jak i ogólnej działalności kanału. Nie ma więc sensu analiza i doszukiwanie się wzorców w tych danych, jeśli muszą one wynikać wyłącznie z charakteru filmiku i kanału, które zależą wyłącznie od youtubera. Sztuczna próba tworzenia contentu na podstawie losowych zlepków słów niezwiązanych z działalnością twórcy jest bezcelowa.
+
+### Wnioski
+- Liczba tagów jest podobna dla regionów US i GB i oscyluje mniej więcej w granicach 10-30.
+- Liczba linków w opisie analogicznie, wynosi mniej więcej 5.
+- Długość tytułu: średnio około 50 znaków
+- Długość opisu: średnio nieco ponad 600.
+- Dominują kategorie "rozrywka" i "muzyka", aczkolwiek jak wcześniej wspomniane filmiki z przypisaną kategorią stanowią niewielki odsetek całego zbioru danych
+- W miesiącach czerwiec - październik jest bardzo mało filmów, prawdopodobnie niezbalansowany zbiór danych.
+- Wyłączona możliwość oceniania nie ma większego wpływu na wyświetlenia.
+
 Ostatnią obserwacją jest przedstawienie macierzy korelacji. Wynika z niej dodatnia korelacja między kilkoma grupami atrybutów.
 Pierwszą grupę stanowią atrybuty: 'views', 'likes', 'dislikes' oraz 'comment_count'. Jest to dosyć zrozumiałe, gdyż logicznym
 wydaje się, że jeśli film będzie miał więcej odsłon to więcej użytkowników go oceni oraz skomentuje. Drugą grupą skorelowaną są atrybuty:
@@ -60,6 +71,7 @@ zaistnieć w zakładce Trendings. Jednak może mieć to związek z tym, że dany
 a 'trending_date' to data ostatniego razu kiedy ten film się tam pojawił. Jeśli chodzi o grupy skorelowanych atrybutów, to z każdej
 takiej grupy do dalszego przetwarzania i uzyskiwania wiedzy będzie wybrany jeden z nich, aby taka grupa nie miała sztucznie zwiększonej wagi ważności.
 
-### Wnioski
-Atrybuty, których nie da się wykorzystać:
+Atrybuty, których nie da się wykorzystać lub są nieprzydatne:
 - 'video_id' - służy tylko jako ID video i nie da się nic z tego wywnioskować
+- 'channel_title' - są to nazwy własne, często nazwiska, i nie ma sensu tego analizować
+- liczba wystąpień danych słów w jakichkolwiek łańcuchach znaków - youtube zawiera różnorodne filmiki, a słowa związane z nimi są ściśle powiązane z tematyką, którą obejmują, więc jeśli celem jest dostanie się do zakładki trendings, to zakładamy, że słowa związane z filmikiem będą naturalną implikacją jego treści, a nie losowym zlepkiem najczęściej występujących słów, z zupełnie innej kategorii.
