@@ -100,6 +100,41 @@ plt.show()
 # Wypisanie statystyk odnośnie liczby video z daną kategorią (lub bez)
 print(data['category'].value_counts(dropna=False))
 
+# Wykres liczby video w zależności od miesiąca w którym zostały opublikowane
+sns.countplot(x='publish_time_month', data=data)
+plt.show()
+
+for group in ['publish_time_month', 'category']:
+    for column in ['views', 'likes', 'comment_count']:
+        # Rysowanie wykresów pudełkowych dla wybranych atrybutów
+        # bez obserwacji odstających - aby wykres był czytelniejszy
+        data.boxplot(by=group, column=[column], showfliers=False)
+        if group == 'category':
+            plt.xticks(rotation='vertical')
+        plt.suptitle('')
+        plt.show()
+
+        # Wypisanie statystyk zwizualizowanych na wcześniejszych wykresach
+        print(data.groupby(group)[column].describe())
+
+for column in ['views', 'likes']:
+    # Rysowanie wykresów pudełkowych dla wybranych atrybutów
+    # bez obserwacji odstających - aby wykres był czytelniejszy
+    data.boxplot(by='comments_disabled', column=[column], showfliers=False)
+    plt.suptitle('')
+    plt.show()
+    # Wypisanie statystyk zwizualizowanych na wcześniejszych wykresach
+    print(data.groupby('comments_disabled')[column].describe())
+
+for column in ['views', 'comment_count']:
+    # Rysowanie wykresów pudełkowych dla wybranych atrybutów
+    # bez obserwacji odstających - aby wykres był czytelniejszy
+    data.boxplot(by='ratings_disabled', column=[column], showfliers=False)
+    plt.suptitle('')
+    plt.show()
+    # Wypisanie statystyk zwizualizowanych na wcześniejszych wykresach
+    print(data.groupby('ratings_disabled')[column].describe())
+
 # Rysowanie wykresu korelacji atrybutów
 correlation_matrix = data.corr()
 ax = sns.heatmap(correlation_matrix,
