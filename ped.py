@@ -1,6 +1,10 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import cv2
+import numpy as np
+import urllib.request
+import urllib.error
 
 
 # Funkcja parsująca atrybut trending_date do struktury Timestamp
@@ -27,6 +31,27 @@ def extract_category_with_id_from_json_items(items):
     return int(category_id), category
 
 
+# Funkcja pobierająca miniaturke z podanego linku
+def download_thumbnail(thumbnail_link, video_id):
+    try:
+        resp = urllib.request.urlopen(thumbnail_link)
+        image = np.asarray(bytearray(resp.read()), dtype="uint8")
+        image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+        cv2.imwrite("thumbnails\\" + video_id + ".png", image)
+    except urllib.error.HTTPError:
+        pass
+
+
+# Funkcja wyliczająca średnie RGB dla miniaturki filmu
+def extract_average_rgb(video_id):
+    try:
+        image = cv2.imread("thumbnails\\" + video_id + ".png")
+        avg_color_per_row = np.average(image, axis=0)
+        return np.average(avg_color_per_row, axis=0)
+    except:
+        return "", "", ""
+
+
 # Załadowanie danych z pliku
 data_GB = pd.read_csv("GB_videos_5p.csv", delimiter=';', encoding='latin1')
 data_US = pd.read_csv("US_videos_5p.csv", delimiter=';')
@@ -37,9 +62,28 @@ data_US['country'] = "US"
 
 # Złączenie danych w jeden zbiór
 data = pd.concat([data_GB, data_US])
+data = data.reset_index(drop=True)
 
 # Zmiana nazwy atrybuty na poprawną (bez spacji na końcu)
 data = data.rename(columns={"description ": "description"})
+
+# Zmiana struktury danych atrybutu trending_date
+data['trending_date'] = data['trending_date'].map(lambda trending_date: trending_date_to_timestamp(trending_date))
+
+# Utworzenie mappingów na potrzeby kolejnych atrybutów
+video_id_to_trending_count_mapping = data['video_id'].value_counts().to_dict()
+video_id_to_first_trending_date_mapping = data.sort_values('trending_date').drop_duplicates("video_id") \
+    .set_index('video_id').to_dict()['trending_date']
+
+# Usunięcie duplikatów filmów po video_id
+data = data.sort_values('views', ascending=False).drop_duplicates("video_id").sort_index().reset_index(drop=True)
+
+# Utworzenie atrybutów: liczba wystąpień w zakładce Trending oraz data pierwszego pojawienia się filmu w zakładce Trending
+data['trending_count'] = data['video_id'].map(lambda video_id: video_id_to_trending_count_mapping[video_id])
+data['first_trending_date'] = data['video_id'].map(lambda video_id: video_id_to_first_trending_date_mapping[video_id])
+
+# Zmiana nazwy atrybutu, który tak naprawdę jest teraz ostatnia datą wystąpienia filmiku w zakładce Trending
+data = data.rename(columns={"trending_date": "last_trending_date"})
 
 # Utworzenie nowych atrybutów na podstawie już obecnych
 data['likes_views_ratio'] = data['likes'] / data['views']
@@ -50,9 +94,6 @@ data['comment_count_views_ratio'] = data['comment_count'] / data['views']
 data['title_length'] = data.apply(lambda row: len(row['title']), axis=1)
 data['description_length'] = data.apply(lambda row: len(str(row['description'])), axis=1)
 
-# Zmiana struktury danych atrybutu trending_date
-data['trending_date'] = data['trending_date'].map(lambda trending_date: trending_date_to_timestamp(trending_date))
-
 # Uproszczenie danych atrybutu publish_time - usunięcie czasu, zostawienie tylko daty
 data['publish_time'] = data['publish_time'].map(lambda publish_time: pd.Timestamp(pd.Timestamp(publish_time).date()))
 
@@ -61,7 +102,7 @@ data['publish_time_year'] = data['publish_time'].map(lambda publish_time: publis
 data['publish_time_month'] = data['publish_time'].map(lambda publish_time: publish_time.month)
 
 # Utworzenie atrybutu, który opisuje ile czasu (w dniach) video potrzebowało aby pojawić się w proponowanych
-data['days_from_publish_time_to trending_date'] = data['trending_date'] - data['publish_time']
+data['days_from_publish_time_to trending_date'] = data['first_trending_date'] - data['publish_time']
 data['days_from_publish_time_to trending_date'] = data['days_from_publish_time_to trending_date'].map(
     lambda timedelta: timedelta.days)
 
@@ -164,3 +205,11 @@ plt.show()
 
 # Wypisanie macierzy korelacji
 print(data.corr())
+
+# Część kodu odpowiedzialna za pobranie miniaturek
+# for _, row in data.iterrows():
+#     download_thumbnail(row['thumbnail_link'], row['video_id'])
+
+# Utworzenie trzech nowych atrybutów opartych na średnich wartościach dla każdego z kanałów RGB
+data['average_red'], data['average_green'], data['average_blue'] = \
+    zip(*data['video_id'].map(lambda video_id: extract_average_rgb(video_id)))
