@@ -254,4 +254,6 @@ data['rms_contrast'] = zip(*data['video_id'].map(lambda video_id: load_and_proce
 
 # Dodanie atrybutów wyrażających emocję na miniaturce ('angry','disgust','fear','happy','sad','surprise','neutral')
 emotion_vectors = pd.read_csv("emotions.csv", delimiter=',')
-data = pd.merge(data, emotion_vectors, on='video_id')
+data = pd.merge(data, emotion_vectors, how='left', on='video_id')
+
+print()
