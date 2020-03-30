@@ -144,6 +144,10 @@ data['days_from_publish_time_to trending_date'] = data['days_from_publish_time_t
 data['number_of_tags'] = data['tags'].map(lambda tags: tags_to_number_of_tags(tags))
 data['number_of_links'] = data['description'].map(lambda description: str(description).count("http"))
 
+# Dodanie atrybutu z wektorem emocji ['angry','disgust','fear','happy','sad','surprise','neutral']
+emotion_vectors = pd.read_csv("emotions.csv", delimiter=',')
+print(emotion_vectors[0:10])
+
 for column in ['number_of_tags', 'number_of_links', 'title_length', 'description_length']:
     # Rysowanie wykresów pudełkowych interesujących atrybutów liczbowych (pierwszy wykres - całość danych, drugi wykres -
     # dane w podziale na kraj US lub GB)
