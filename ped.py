@@ -256,4 +256,8 @@ data['rms_contrast'] = zip(*data['video_id'].map(lambda video_id: load_and_proce
 emotion_vectors = pd.read_csv("emotions.csv", delimiter=',')
 data = pd.merge(data, emotion_vectors, how='left', on='video_id')
 
-print()
+for color in ['hue_red', 'hue_yellow', 'hue_green', 'hue_cyan', 'hue_blue', 'hue_magenta']:
+    print(color + ": " + str(np.sum(data[color])))
+
+for emotion in ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']:
+    print(emotion + ": " + str(np.count_nonzero(data[emotion] > 0)))
