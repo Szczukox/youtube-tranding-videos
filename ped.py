@@ -64,6 +64,9 @@ data_US['country'] = "US"
 data = pd.concat([data_GB, data_US])
 data = data.reset_index(drop=True)
 
+# Usunięcie wpisów z 'video_id' == #NAZWA?
+data = data[data['video_id'] != "#NAZWA?"]
+
 # Zmiana nazwy atrybuty na poprawną (bez spacji na końcu)
 data = data.rename(columns={"description ": "description"})
 

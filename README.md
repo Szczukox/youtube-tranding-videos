@@ -1,4 +1,9 @@
 # youtube-tranding-videos
+
+##### Autorzy
+- Adrian Kotarski 127346 
+- Patryk Szczuczko 127215
+
 ## Etap 1
 ### Opis działań
 Początkowo dane z obydwu plików łączymy w jeden większy zbiór danych, dodając
@@ -78,6 +83,19 @@ Atrybuty, których nie da się wykorzystać lub są nieprzydatne:
 
 W ogólności ciekawsze wnioski będzie można sformułować w momencie konfrontacji powyższych statystyk ze statystykami ze zbioru filmików niewystępujących na trending. Wówczas być może wyłonią się pewne różnice w filmikach z obu zbiorów danych. Na ten moment rozszerzona analiza nie jest aż tak istotna, gdyż nie wiemy jak ma się to do filmików niewystępujących na trending (analiza danej statystyki okaże się być stratą czasu, jeśli filmiki trending nie będą się nią odróżniały od nie-trending).
 
-### Autorzy
-- Adrian Kotarski 127346 
-- Patryk Szczuczko 127215
+### Aktualizacja do Etapu 1
+- Po bardziej wnikliwym przejrzeniu zbioru danych okazało się że atrybut 'video_id' nie jest unikalny.
+W związku z tym zliczyliśmy ilość wystąpień dla każdej wartości 'video_id' i utworzyliśmy na jej podstawie
+nowy atrybut 'trending_count'. Zdecydowaliśmy się usunąć wpisy z tymi samymi 'video_id' w taki sposób,
+że zostawiliśmy wpis z najpóźniejszą datą w atrybucie 'trending_date' jednocześnie zmieniając jej nazwę na
+'last_trending_date'. Dzięki tej operacji atrybut 'video_id' stał się unikalny.
+Jednocześnie utworzyliśmy atrybut 'first_trending_date', który zawiera datę pierwszego
+ukazania się filmu o danym 'video_id' w zakładce Trending.
+- W ramach realizacji operacji z poprzedniego punktu został wykryty również fakt, że atrybut 'video_id'
+posiadał również błedną wartość '#NAZWA?'. Jako, że w Etapie 2 zajmujemy się tylko atrybutami wizualnymi,
+postanowiliśmy póki co usunąć te wpisy ze zbioru danych. Stanowią one około 1% wszystkich wpisów w zbiorze,
+więc strata danych nie jest duża. Natomiast po analizie wpisów z tym błędnym 'video_id', wydaje się, że lepszym
+pomysłem jest zbudowanie unikalnych 'video_id' z części atrybutu 'thumbnail_link', z których (jak wynika z naszych
+obserwacji) są zbudowane również inne, prawidłowe wartości 'video_id'. Ten pomysł zrealizujemy w ramach Etapu 3.
+
+## Etap 2
