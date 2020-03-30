@@ -42,14 +42,45 @@ def download_thumbnail(thumbnail_link, video_id):
         pass
 
 
-# Funkcja wyliczająca średnie RGB dla miniaturki filmu
-def extract_average_rgb(video_id):
+# Funkcja wczytująca i przetwarzająca miniaturkę (obicięcie 10 górnych i dolnych pikseli w celi wyeliminowania czarnych pasków)
+def load_and_process_rgb_thumbnail(video_id):
     try:
-        image = cv2.imread("thumbnails\\" + video_id + ".png")
-        avg_color_per_row = np.average(image, axis=0)
-        return np.average(avg_color_per_row, axis=0)
+        image = cv2.imread("thumbnails\\" + video_id + ".png")[10:-10]
+        image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        return np.concatenate((extract_average(image), extract_dominant(image),
+                               extract_average(image_hsv), extract_dominant(image_hsv),
+                               extract_count_pixels_by_hue(image_hsv), extract_rms_contrast(image_gray)), axis=None)
     except:
-        return "", "", ""
+        return 19 * ([float("NaN")])
+
+
+# Funkcja wyliczająca średnie dla miniaturki filmu
+def extract_average(image):
+    return image.mean(axis=0).mean(axis=0)
+
+
+# Funkcja wyliczająca dominantę dla miniaturki filmu
+def extract_dominant(image):
+    colors, count = np.unique(image.reshape(-1, image.shape[-1]), axis=0, return_counts=True)
+    return colors[count.argmax()]
+
+
+# Funkcja zliczająca pixele w ramach poszczególnych przedziałów wartości hue
+def extract_count_pixels_by_hue(image_hsv):
+    hue = image_hsv[:, :, 0]
+    red = np.size(hue[(hue < 15) | (hue >= 165)])
+    yellow = np.size(hue[(hue >= 15) & (hue < 45)])
+    green = np.size(hue[(hue >= 45) & (hue < 75)])
+    cyan = np.size(hue[(hue >= 75) & (hue < 105)])
+    blue = np.size(hue[(hue >= 105) & (hue < 135)])
+    magenta = np.size(hue[(hue >= 135) & (hue < 165)])
+    return red, yellow, green, cyan, blue, magenta
+
+
+# Funckja wyliczająca kontrast RMS (root mean square)
+def extract_rms_contrast(image_gray):
+    return image_gray.std()
 
 
 # Załadowanie danych z pliku
@@ -213,6 +244,10 @@ print(data.corr())
 # for _, row in data.iterrows():
 #     download_thumbnail(row['thumbnail_link'], row['video_id'])
 
-# Utworzenie trzech nowych atrybutów opartych na średnich wartościach dla każdego z kanałów RGB
-data['average_red'], data['average_green'], data['average_blue'] = \
-    zip(*data['video_id'].map(lambda video_id: extract_average_rgb(video_id)))
+# Utworzenie atrvbutów wizualnych
+data['average_red'], data['average_green'], data['average_blue'], \
+data['dominant_red]'], data['dominant_green'], data['dominant_blue'], \
+data['average_hue'], data['average_saturation'], data['average_value'], \
+data['dominant_hue]'], data['dominant_saturation'], data['dominant_value'], \
+data['hue_red'], data['hue_yellow'], data['hue_green'], data['hue_cyan'], data['hue_blue'], data['hue_magenta'], \
+data['rms_contrast'] = zip(*data['video_id'].map(lambda video_id: load_and_process_rgb_thumbnail(video_id)))
