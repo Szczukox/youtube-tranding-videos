@@ -99,6 +99,17 @@ pomysłem jest zbudowanie unikalnych 'video_id' z części atrybutu 'thumbnail_l
 obserwacji) są zbudowane również inne, prawidłowe wartości 'video_id'. Ten pomysł zrealizujemy w ramach Etapu 3.
 
 ## Etap 2
-
+- Na początku napisaliśmy funkcję odpowiadającą za pobranie wszystkich obrazków i zapisanie ich do katalogu 'thumbnails'.
+Okazało się, że nie wszystkie filmiki posiadają swoją miniaturkę.
+- Przeglądając pobrane miniaturki zaobserwowaliśmy pewną prawidłowość, że przy górnych i dolnych krawędziach
+występują czarne paski. Postanowiliśmy więc uciąć minaturki o 10 pikseli z góry i 10 pikseli z dołu, aby
+późniejsze tworzenie atrybutów na podstawie charakterystyki pikseli nie było przekłamane.
+- Następnie zostały utworzone atrybuty oparte na charakterystyce pikseli:
+    - w przestrzeni RGB - średni kolor piksela (atrybuty: 'average_red', 'average_green', 'average_blue')
+    oraz wartość dominująca ('mode_red', 'mode_green', 'mode_blue'),
+    - w przestrzeni HSV - średnia wartość piksela (atrybuty: 'average_hue', 'average_saturation', 'average_value')
+    oraz wartość dominująca ('mode_hue', 'mode_saturation', 'mode_value'), a także ilość pikseli mieszcząca się
+    w danym przedziale wartości hue ('hue_red', 'hue_yellow', 'hue_green', 'hue_cyan', 'hue_blue', 'hue_magenta')
+    - w skali szarości - kontrast RMS (root mean square)
 - W przypadku wykrywania elementów na miniaturkach zdecydowaliśmy się na użycie gotowych pretrenowanych modeli z biblioteki Keras, tj. VGG16, ResNet, InceptionV3 i MobileNet. W zamyśle miały one posłużyć do wykrycia różnego rodzaju obiektów na miniaturce, tak aby umożliwić przeprowadzenie analizy z nimi związanej. Być może udałoby się w ten sposób wyznaczyć jakieś trendy. Niestety próby pracy z powyższymi modelami nie przyniosły żadnych rezultatów - testy pokazały, że te modele zupełnie nie radzą sobie z miniaturkami, które posiadamy. Wyniki, które zwracają są nietrafione i podawane z bardzo małą pewnością w większości przypadków, prawdopodobnie wyynika to z tego, iż na miniaturkach najczęściej pojawiają się ludzie, a modele skupiają się na wykrywaniu zwierząt, elementów otoczenia czy garderoby. Wobec tego zdecydowaliśmy się pominąć w analizie wykorzystanie powyższych rozwiązań.
 - Wykorzystaliśmy za to inny [model](https://github.com/jalajthanaki/Facial_emotion_recognition_using_Keras). Podane rozwiązanie wymagało odpowiedniej modyfikacji, gdyż oryginalnie program analizował pojedynczy plik i wyświetał obraz z naniesionymi zaznaczeniami twarzy wraz z rodzajem emocji. Kod został zmieniony tak, aby dla każdej z naszych miniaturek (już bez duplikatów) zwrócił odpowiadający wektor z liczbami wystąpień poszczególnych rodzajów emocji (jedna miniaturka może pokazywać np. dwie smutne osoby i jedną wesołą). Wyniki zostały zapisane do oddzielnego pliku .csv, aby uniknąć częstego wykonywania długotrwałych obliczeń. Ostatecznie w głównym skrypcie tworzony jest nowy atrybut z wektorem liczby wystąpień emocji na podstawie tego pliku.

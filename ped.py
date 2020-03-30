@@ -48,8 +48,8 @@ def load_and_process_rgb_thumbnail(video_id):
         image = cv2.imread("thumbnails\\" + video_id + ".png")[10:-10]
         image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        return np.concatenate((extract_average(image), extract_dominant(image),
-                               extract_average(image_hsv), extract_dominant(image_hsv),
+        return np.concatenate((extract_average(image), extract_mode(image),
+                               extract_average(image_hsv), extract_mode(image_hsv),
                                extract_count_pixels_by_hue(image_hsv), extract_rms_contrast(image_gray)), axis=None)
     except:
         return 19 * ([float("NaN")])
@@ -61,7 +61,7 @@ def extract_average(image):
 
 
 # Funkcja wyliczająca dominantę dla miniaturki filmu
-def extract_dominant(image):
+def extract_mode(image):
     colors, count = np.unique(image.reshape(-1, image.shape[-1]), axis=0, return_counts=True)
     return colors[count.argmax()]
 
@@ -246,9 +246,9 @@ print(data.corr())
 
 # Utworzenie atrvbutów wizualnych
 data['average_red'], data['average_green'], data['average_blue'], \
-data['dominant_red]'], data['dominant_green'], data['dominant_blue'], \
+data['mode_red]'], data['mode_green'], data['mode_blue'], \
 data['average_hue'], data['average_saturation'], data['average_value'], \
-data['dominant_hue]'], data['dominant_saturation'], data['dominant_value'], \
+data['mode_hue]'], data['mode_saturation'], data['mode_value'], \
 data['hue_red'], data['hue_yellow'], data['hue_green'], data['hue_cyan'], data['hue_blue'], data['hue_magenta'], \
 data['rms_contrast'] = zip(*data['video_id'].map(lambda video_id: load_and_process_rgb_thumbnail(video_id)))
 
