@@ -144,10 +144,6 @@ data['days_from_publish_time_to trending_date'] = data['days_from_publish_time_t
 data['number_of_tags'] = data['tags'].map(lambda tags: tags_to_number_of_tags(tags))
 data['number_of_links'] = data['description'].map(lambda description: str(description).count("http"))
 
-# Dodanie atrybutu z wektorem emocji ['angry','disgust','fear','happy','sad','surprise','neutral']
-emotion_vectors = pd.read_csv("emotions.csv", delimiter=',')
-print(emotion_vectors[0:10])
-
 for column in ['number_of_tags', 'number_of_links', 'title_length', 'description_length']:
     # Rysowanie wykresów pudełkowych interesujących atrybutów liczbowych (pierwszy wykres - całość danych, drugi wykres -
     # dane w podziale na kraj US lub GB)
@@ -255,3 +251,7 @@ data['average_hue'], data['average_saturation'], data['average_value'], \
 data['dominant_hue]'], data['dominant_saturation'], data['dominant_value'], \
 data['hue_red'], data['hue_yellow'], data['hue_green'], data['hue_cyan'], data['hue_blue'], data['hue_magenta'], \
 data['rms_contrast'] = zip(*data['video_id'].map(lambda video_id: load_and_process_rgb_thumbnail(video_id)))
+
+# Dodanie atrybutów wyrażających emocję na miniaturce ('angry','disgust','fear','happy','sad','surprise','neutral')
+emotion_vectors = pd.read_csv("emotions.csv", delimiter=',')
+data = pd.merge(data, emotion_vectors, on='video_id')
