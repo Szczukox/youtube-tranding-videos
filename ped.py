@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 import urllib.request
 import urllib.error
+import os.path
 
 
 # Funkcja parsująca atrybut trending_date do struktury Timestamp
@@ -31,15 +32,29 @@ def extract_category_with_id_from_json_items(items):
     return int(category_id), category
 
 
-# Funkcja pobierająca miniaturke z podanego linku
+# Funkcja pobierająca miniaturke w rozdzielczości 120x90 z podanego linku
 def download_thumbnail(thumbnail_link, video_id):
-    try:
-        resp = urllib.request.urlopen(thumbnail_link)
-        image = np.asarray(bytearray(resp.read()), dtype="uint8")
-        image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-        cv2.imwrite("thumbnails\\" + video_id + ".png", image)
-    except urllib.error.HTTPError:
-        pass
+    if not os.path.exists("thumbnails\\" + video_id + ".png"):
+        try:
+            resp = urllib.request.urlopen(thumbnail_link)
+            image = np.asarray(bytearray(resp.read()), dtype="uint8")
+            image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+            cv2.imwrite("thumbnails\\" + video_id + ".png", image)
+        except urllib.error.HTTPError:
+            pass
+
+
+# Funkcja pobierająca miniaturke w rozdzielczości 480x360 z podanego linku
+def download_hq_thumbnail(thumbnail_link, video_id):
+    if not os.path.exists("thumbnails_hq\\" + video_id + ".png"):
+        try:
+            index = thumbnail_link.find("default.jpg")
+            resp = urllib.request.urlopen(thumbnail_link[:index] + "hq" + thumbnail_link[index:])
+            image = np.asarray(bytearray(resp.read()), dtype="uint8")
+            image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+            cv2.imwrite("thumbnails_hq\\" + video_id + ".png", image)
+        except urllib.error.HTTPError:
+            pass
 
 
 # Funkcja wczytująca i przetwarzająca miniaturkę (obicięcie 10 górnych i dolnych pikseli w celi wyeliminowania czarnych pasków)
@@ -111,6 +126,10 @@ video_id_to_first_trending_date_mapping = data.sort_values('trending_date').drop
 
 # Usunięcie duplikatów filmów po video_id
 data = data.sort_values('views', ascending=False).drop_duplicates("video_id").sort_index().reset_index(drop=True)
+
+# Część kodu odpowiedzialna za pobranie miniaturek
+# for _, row in data.iterrows():
+#     download_hq_thumbnail(row['thumbnail_link'], row['video_id'])
 
 # Utworzenie atrybutów: liczba wystąpień w zakładce Trending oraz data pierwszego pojawienia się filmu w zakładce Trending
 data['trending_count'] = data['video_id'].map(lambda video_id: video_id_to_trending_count_mapping[video_id])
@@ -239,10 +258,6 @@ plt.show()
 
 # Wypisanie macierzy korelacji
 print(data.corr())
-
-# Część kodu odpowiedzialna za pobranie miniaturek
-# for _, row in data.iterrows():
-#     download_thumbnail(row['thumbnail_link'], row['video_id'])
 
 # Utworzenie atrvbutów wizualnych
 data['average_red'], data['average_green'], data['average_blue'], \
