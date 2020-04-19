@@ -56,15 +56,15 @@ def test_image(file):
     
 if __name__=='__main__':
 
-    with open('emotions.csv', 'a+', newline='') as write_obj:
+    with open('emotions_hq.csv', 'a+', newline='') as write_obj:
         csv_writer = writer(write_obj)
 
 
         counter = 0
-        for filename in os.listdir('thumbnails'):
+        for filename in os.listdir('thumbnails_hq'):
             if filename.endswith(".png"):
-                print(os.path.join('thumbnails\\', filename))
-                e = test_image(os.path.join('thumbnails\\', filename))
+                print(os.path.join('thumbnails_hq\\', filename))
+                e = test_image(os.path.join('thumbnails_hq\\', filename))
 
                 row_contents = [os.path.splitext(os.path.basename(filename))[0], e['angry'], e['disgust'], e['fear'], e['happy'], e['sad'], e['surprise'], e['neutral']]
 

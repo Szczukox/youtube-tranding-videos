@@ -257,7 +257,7 @@ data['hue_red'], data['hue_yellow'], data['hue_green'], data['hue_cyan'], data['
 data['rms_contrast'] = zip(*data['video_id'].map(lambda video_id: load_and_process_rgb_thumbnail(video_id)))
 
 # Dodanie atrybutów wyrażających emocję na miniaturce ('angry','disgust','fear','happy','sad','surprise','neutral')
-emotion_vectors = pd.read_csv("emotions.csv", delimiter=',')
+emotion_vectors = pd.read_csv("emotions_hq.csv", delimiter=',')
 data = pd.merge(data, emotion_vectors, how='left', on='video_id')
 
 # Wykres pudełkowy liczby pikseli obrazka dla każdego z odcieni hue
