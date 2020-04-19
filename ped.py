@@ -242,28 +242,11 @@ for column in ['views', 'comment_count']:
     # Wypisanie statystyk zwizualizowanych na wcześniejszych wykresach
     print(data.groupby('ratings_disabled')[column].describe())
 
-# Rysowanie wykresu korelacji atrybutów
-correlation_matrix = data.corr()
-ax = sns.heatmap(correlation_matrix,
-                 vmin=-1, vmax=1, center=0,
-                 cmap=sns.diverging_palette(20, 220, n=200),
-                 square=True)
-sns.set(font_scale=0.01)
-ax.set_xticklabels(
-    ax.get_xticklabels(),
-    rotation=45,
-    horizontalalignment='right'
-)
-plt.show()
-
-# Wypisanie macierzy korelacji
-print(data.corr())
-
 # Utworzenie atrvbutów wizualnych
 data['average_red'], data['average_green'], data['average_blue'], \
 data['mode_red]'], data['mode_green'], data['mode_blue'], \
 data['average_hue'], data['average_saturation'], data['average_value'], \
-data['mode_hue]'], data['mode_saturation'], data['mode_value'], \
+data['mode_hue'], data['mode_saturation'], data['mode_value'], \
 data['hue_red'], data['hue_yellow'], data['hue_green'], data['hue_cyan'], data['hue_blue'], data['hue_magenta'], \
 data['rms_contrast'] = zip(*data['video_id'].map(lambda video_id: load_and_process_rgb_thumbnail(video_id)))
 
@@ -271,8 +254,37 @@ data['rms_contrast'] = zip(*data['video_id'].map(lambda video_id: load_and_proce
 emotion_vectors = pd.read_csv("emotions.csv", delimiter=',')
 data = pd.merge(data, emotion_vectors, how='left', on='video_id')
 
-for color in ['hue_red', 'hue_yellow', 'hue_green', 'hue_cyan', 'hue_blue', 'hue_magenta']:
-    print(color + ": " + str(np.sum(data[color])))
+# Wykres pudełkowy liczby pikseli obrazka dla każdego z odcieni hue
+hue_colors = ['hue_red', 'hue_yellow', 'hue_green', 'hue_cyan', 'hue_blue', 'hue_magenta']
+data.boxplot(column=hue_colors)
+plt.title("Liczba pikseli w danym odcieniu Hue")
+plt.show()
 
+# Wypisanie statystyk
+for column in hue_colors:
+    print(data[column].describe())
+
+# Wypisanie statystyk liczby emocji dla wszystkich obrazków w podziale na typ
+emotion_count = {}
 for emotion in ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']:
-    print(emotion + ": " + str(np.count_nonzero(data[emotion] > 0)))
+    count = np.count_nonzero(data[emotion] > 0)
+    emotion_count[emotion] = count
+    print(emotion + ": " + str(count))
+
+# Rysowanie wykresu liczby emocji dla wszystkich obrazków w podziale na typ
+plt.bar(emotion_count.keys(), emotion_count.values())
+plt.title("Emotion counts")
+plt.show()
+
+# Rysowanie wykresu korelacji atrybutów
+f = plt.figure(figsize=(30, 30))
+plt.matshow(data.corr(), fignum=f.number, cmap=plt.cm.get_cmap("coolwarm"))
+plt.xticks(range(data.corr().shape[1]), data.corr().columns, fontsize=20, rotation=90)
+plt.yticks(range(data.corr().shape[1]), data.corr().columns, fontsize=20)
+cb = plt.colorbar()
+cb.ax.tick_params(labelsize=15)
+plt.suptitle("Correlation", fontsize=64)
+plt.show()
+
+# Wypisanie macierzy korelacji
+print(data.corr())
