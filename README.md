@@ -129,14 +129,15 @@ zastÄ…piÄ‡ ID wygenerowanym z wartoÅ›ci atrybutu 'thumbnail_link', w ktÃ³rym jes
 zastosowaÄ‡ tÄ™ operacjÄ™, co pozwoliÅ‚o na uzyskanie dodatkowych kilkuset rekordÃ³w. WczeÅ›niej po prostu usuwaliÅ›my
 rekordy z 'video_id' == '#NAZWA?'.
 
-### Analiza atrybutów i ich zale¿noœci
-- wyœwietlenia, lajki, komentarze - du¿a korelacja, mo¿liwa redukcja
+### Analiza atrybutÃ³w i ich zaleÅ¼noÅ›ci
+- wyÅ›wietlenia, lajki, komentarze - duÅ¼a korelacja, moÅ¼liwa redukcja
 - kolory
 - itd.
 ### Wybrane atrybuty
 - atrybut1
 - atrybut2
 - itd.
-### Analiza atrybutów pod k¹tem przydatnoœci przy etykietowaniu i ostatecznej wiedzy
-- na viewy itp. nie mamy wp³ywu, ale mog¹ siê przydaæ do predykcji momentu wejœcia na trending
+### Analiza atrybutÃ³w pod kÄ…tem przydatnoÅ›ci przy etykietowaniu i ostatecznej wiedzy
+- na viewy itp. nie mamy wpÅ‚ywu, ale mogÄ… siÄ™ przydaÄ‡ do predykcji momentu wejÅ›cia na trending
 - itd.
+
