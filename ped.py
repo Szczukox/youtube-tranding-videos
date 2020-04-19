@@ -8,6 +8,11 @@ import urllib.error
 import os.path
 
 
+# Funkcja mapująca thumbnail_link na video_id
+def map_video_id_from_thumbnail_link(thumbnail_link):
+    return thumbnail_link.split(sep='/')[-2]
+
+
 # Funkcja parsująca atrybut trending_date do struktury Timestamp
 def trending_date_to_timestamp(trending_date):
     date_parts = list(map(int, str(trending_date).split(sep='.')))
@@ -110,8 +115,9 @@ data_US['country'] = "US"
 data = pd.concat([data_GB, data_US])
 data = data.reset_index(drop=True)
 
-# Usunięcie wpisów z 'video_id' == #NAZWA?
-data = data[data['video_id'] != "#NAZWA?"]
+# Przypisanie nowych video_id dla wpisów z 'video_id' == #NAZWA? na podstawie thumbnail_link
+data.loc[data['video_id'] == "#NAZWA?", "video_id"] = \
+    data['thumbnail_link'].map(lambda thumbnail_link: map_video_id_from_thumbnail_link(thumbnail_link))
 
 # Zmiana nazwy atrybuty na poprawną (bez spacji na końcu)
 data = data.rename(columns={"description ": "description"})
