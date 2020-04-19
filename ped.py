@@ -121,22 +121,22 @@ data['trending_date'] = data['trending_date'].map(lambda trending_date: trending
 
 # Utworzenie mappingów na potrzeby kolejnych atrybutów
 video_id_to_trending_count_mapping = data['video_id'].value_counts().to_dict()
-video_id_to_first_trending_date_mapping = data.sort_values('trending_date').drop_duplicates("video_id") \
+video_id_to_last_trending_date_mapping = data.sort_values('trending_date', ascending=False).drop_duplicates("video_id") \
     .set_index('video_id').to_dict()['trending_date']
 
 # Usunięcie duplikatów filmów po video_id
-data = data.sort_values('views', ascending=False).drop_duplicates("video_id").sort_index().reset_index(drop=True)
+data = data.sort_values('views').drop_duplicates("video_id").sort_index().reset_index(drop=True)
 
 # Część kodu odpowiedzialna za pobranie miniaturek
 # for _, row in data.iterrows():
 #     download_hq_thumbnail(row['thumbnail_link'], row['video_id'])
 
-# Utworzenie atrybutów: liczba wystąpień w zakładce Trending oraz data pierwszego pojawienia się filmu w zakładce Trending
+# Utworzenie atrybutów: liczba wystąpień w zakładce Trending oraz data ostatniego pojawienia się filmu w zakładce Trending
 data['trending_count'] = data['video_id'].map(lambda video_id: video_id_to_trending_count_mapping[video_id])
-data['first_trending_date'] = data['video_id'].map(lambda video_id: video_id_to_first_trending_date_mapping[video_id])
+data['last_trending_date'] = data['video_id'].map(lambda video_id: video_id_to_last_trending_date_mapping[video_id])
 
-# Zmiana nazwy atrybutu, który tak naprawdę jest teraz ostatnia datą wystąpienia filmiku w zakładce Trending
-data = data.rename(columns={"trending_date": "last_trending_date"})
+# Zmiana nazwy atrybutu, który tak naprawdę jest teraz pierwszą datą wystąpienia filmiku w zakładce Trending
+data = data.rename(columns={"trending_date": "first_trending_date"})
 
 # Utworzenie nowych atrybutów na podstawie już obecnych
 data['likes_views_ratio'] = data['likes'] / data['views']

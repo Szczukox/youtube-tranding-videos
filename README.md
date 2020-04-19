@@ -118,3 +118,8 @@ Prawdopodobna dodatkowa przyczyna słabych wyników to również fakt, że minia
 - Przeważający przedział kolorów, który występował na miniaturkach to czerwony. Było go około 2-krotnie więcej od przedziałów żółtego i niebieskiego, zajmujących w przybliżeniu na równi drugie miejsce co do częstości występowania. Oznacza to, że być może warto przemyśleć wykorzystanie wymienionego przedziału koloru, być może przeciętny widz reaguje na czerwone odcienie nieco pozytywniej od innych kolorów. Nie można jednak wykluczyć, że dominacja czerwonego jest po prostu spowodowana występowaniem twarzy na dużej części miniaturki. Kolory skóry prawdopodobnie najczęściej posiadają taką właśnie barwę, o ile nie są oświetlone specyficznym światłem. Należałoby tutaj przeprowadzić głębszą analizę.
 - Najczęściej występującymi emocjami na miniaturkach były smutek, radość oraz neutralność. Dwukrotnie rzadziej występowały gniew i strach, zaskoczenie około 5-krotnie rzadziej. Wynikałoby z tego, że widzowie najsilniej reagują na widok 3 wcześniej wymienionych emocji i miniaturki powinny je zawierać. Należy mieć jednak na względzie, że zastosowano heurystyczny model, który wiąże się z nieuniknionymi pomyłkami. Należy traktować te wyniki z pewną dozą ostrożności.
 Analiza może jeszcze zostać rozszerzona w kolejnych etapach w miarę zdobywania nowych obserwacji.
+
+## Etap3
+Na początku poprawiliśmy kilka kwestii, których nie zrobiliśy w poprzednim etapie:
+- zmieniliśmy kwestię redukcji rekordów: dla wpisów z tym samym 'video_id' zostawiamy rekord z datą pierwszego
+pojawienia się w Trendings. Wcześniej był to rekord z datą ostatniego pojawienia się w zakładce Trendings
