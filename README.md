@@ -130,47 +130,15 @@ zastosować tę operację, co pozwoliło na uzyskanie dodatkowych kilkuset rekor
 rekordy z 'video_id' == '#NAZWA?'.
 - Do wykrywania emocji na minaturkach używamy teraz tych z wyższą rozdzielczością.
 
-### Analiza i selekcja atrybutów
-Oprócz wstępnej analizy w etapie 1, dodajemy decyzję wraz z krótkim uzasadnieniem o wyborze atrybutów przydatnych w kolejnych etapach projektu. Niektóre atrybuty będą przydatne zarówno w zadaniu etykietowania, klasyfikacji filmów (trending/non-trending), jak i w pozyskaniu wiedzy dla klienta, większość jednakże jest istotna tylko w podzbiorze tych problemów (takie atrybuty też oczywiście zachowujemy).
-
-✘ country - niezbyt istotny atrybut, analiza pokazuje, że dane dla regionów GB i US nie różnią się znacząco i nie ma większej potrzeby by wprowadzać takie rozróżnienie
-
-✔ views/likes/dislikes/comment_count - atrybuty, które będą przydatne przy uczeniu klasyfikatora i być może przy etykietowaniu, dla klienta większej informacji nie niosą, gdyż nie ma on na nie wpływu w momencie tworzenia materiału.
-
-✘ comments/ratings_disabled - nieprzydatne, jako że filmy blokujące komentarze/oceny stanowią drobny odsetek wszystkich filmów, a rozkłady wartości pozostałych atrybutów nie są od tego zależne
-
-✔ trending_count - atrybut potrzebny do odpowiedniego ważenia niektórych przypadków w przypadku uczenia modeli
-
-✔ likes/dislikes/comment_count ratio - na tym etapie nie jesteśmy w stanie powiedzieć czy atrybut na pewno się nie przyda przy klasyfikacji trending/non-trending, dlatego zachowamy atrybut do momentu, gdy będziemy znali rozkład wartości dla filmów non-trending.
-
-✔ title_length - atrybut prawdopodobnie nieprzydatny w etykietowaniu, ale może się przydać przy klasyfikatorze, niesie również pewną wiedzę dla klienta
-
-✔ description_length - j/w
-
-✘ publish_time(year/month) - miesiąc i rok publikacji z pewnością nie mają większego znaczenia, dla klienta tym bardziej jest to bezużyteczna informacja
-
-✘ days_from_publish_time_to_trending_date - atrybut raczej nieprzydatny, nie można go użyć do nauki klasyfikatora, a dla klienta może stanowić jedynie ciekawostkę (gdy np. chce oszacować szanse na dostanie się na kartę trending, już PO wrzuceniu materiału)
-
-✔ number_of_tags/links - może się przydać na późniejszym etapie projektu, w przypadku porównania z filmami non-trending, niesie również pewną wiedzą dla klienta.
-
-
-✔ category_id - filmy zawierające ten atrybut stanowią mniejszość, ale atrybut będzie niezbędny przy zadaniu etykietowania, a także być może ujawni dodatkowe informacje dla klienta, gdy poszerzymy zbiór danych o filmy non-trending
-
-✘ video_has_category - jedyna informacja, którą ten atrybut niesie, to stosunek liczby filmów z- i bez kategorii. 
-
-✘ publish_time_month - zakładamy że miesiąc, w którym opublikowano film nie ma znaczenia na żadnym kolejnym etapie projektu, dlatego całkowicie go odrzucamy
-
-✘ average/mode red/green/blue, rms contrast - atrybuty być może stanowiące jakąś wartość przy zadaniu etykietowania i klasyfikacji, ale nie dające żadnej wiedzy klientowi (uśrednione wartości w większości przypadków stanowią zbyt zdegenerowaną informację)
-
-✔ average/mode hue/saturation/value - te atrybuty, ze względu na przestrzeń HSV, dają już pewną informację klientowi, taką jak preferowany dobór barwy i jasności, dodatkowo tak jak powyższa grupa atrybutów mogą się również przydać przy etykietowaniu i klasyfikacji
-
-✔ hue_red/yellow/green/cyan/blue/magenta - jak wyżej, przydatny atrybut, który pozwala ocenić, które kolory występują częściej w filmach trendujących, można to wykorzystać zarówno do zadania etykietowania, jak i w pozyskaniu wiedzy dla klienta,
-
-✔ angry/disgust/fear/happy/sad/surprise/neutral - pokazują występujące emocje na miniaturkach i można wyznaczyć ogólny rozkład wartości dla całego zbioru. Na tym etapie projektu pozostawiamy ten atrybut, jako że może się okazać w przyszłości przydatny, gdy skonfrontujemy rozkład wartości występujący w filmach nietrendujących, co może się przełożyć na dodatkową wiedzę dla klienta. Może się też nawet przydać przy klasyfikacji lub etykietowaniu.
-
-### Analiza korelacji
-
-Zauważyliśmy oczywiste korelacje, występujące między atrybutami takimi jak liczba wyświetleń i liczba lajków, czy średnia i dominująca wartość piksela. Niestety nie udało się stwierdzić ciekawych, nietrywialnych korelacji. Większość korelacji, zarówno pozytywnych, jak i negatywnych zachodzi między atrybutami związanymi z kolorem. Minimalne korelacje widać między emocjami a kolorami, ale nie widać wyraźniejszych wzorców.
-Korelacje views/likes/comment count od miesiąca publikacji również nie ujawniają ciekawych zależności, nie są też zbyt przydatne dla klienta. Wszystkie powyższe stwierdzenia dotyczą korelacji Pearsona.
-
+### Analiza atrybutów i ich zależności
+- wyświetlenia, lajki, komentarze - duża korelacja, możliwa redukcja
+- kolory
+- itd.
+### Wybrane atrybuty
+- atrybut1
+- atrybut2
+- itd.
+### Analiza atrybutów pod kątem przydatności przy etykietowaniu i ostatecznej wiedzy
+- na viewy itp. nie mamy wpływu, ale mogą się przydać do predykcji momentu wejścia na trending
+- itd.
 
