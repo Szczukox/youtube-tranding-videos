@@ -120,7 +120,7 @@ Prawdopodobna dodatkowa przyczyna słabych wyników to również fakt, że minia
 Analiza może jeszcze zostać rozszerzona w kolejnych etapach w miarę zdobywania nowych obserwacji.
 
 ## Etap3
-Na początku poprawiliśmy kilka kwestii, których nie zrobiliśy w poprzednim etapie:
+Na początku poprawiliśmy kilka kwestii, których nie zrobiliśmy w poprzednim etapie:
 - Zmieniliśmy kwestię redukcji rekordów: dla wpisów z tym samym 'video_id' zostawiamy rekord z datą pierwszego
 pojawienia się w Trendings. Wcześniej był to rekord z datą ostatniego pojawienia się w zakładce Trendings
 - Tak jak wspomnieliśmy w ramach aktualizacji do etapu 1, błędne 'video_id' (z wartością '#NAZWA?') można
@@ -128,6 +128,7 @@ zastąpić ID wygenerowanym z wartości atrybutu 'thumbnail_link', w którym jes
 (przykład: ht<span>tps://</span>i.ytimg.com/vi/Jw1Y-zhQURU/default.jpg -> Jw1Y-zhQURU). W tym etapie udało się
 zastosować tę operację, co pozwoliło na uzyskanie dodatkowych kilkuset rekordów. Wcześniej po prostu usuwaliśmy
 rekordy z 'video_id' == '#NAZWA?'.
+- Do wykrywania emocji na minaturkach używamy teraz tych z wyższą rozdzielczością.
 
 ### Analiza atrybutów i ich zależności
 - wyświetlenia, lajki, komentarze - duża korelacja, możliwa redukcja
