@@ -133,36 +133,40 @@ rekordy z 'video_id' == '#NAZWA?'.
 ### Analiza i selekcja atrybutów
 Oprócz wstępnej analizy w etapie 1, dodajemy decyzję wraz z krótkim uzasadnieniem o wyborze atrybutów przydatnych w kolejnych etapach projektu. Niektóre atrybuty będą przydatne zarówno w zadaniu etykietowania, klasyfikacji filmów (trending/non-trending), jak i w pozyskaniu wiedzy dla klienta, większość jednakże jest istotna tylko w podzbiorze tych problemów (takie atrybuty też oczywiście zachowujemy).
 
-❌ country - niezbyt istotny atrybut, analiza pokazuje, że dane dla regionów GB i US nie różnią się znacząco i nie ma większej potrzeby by wprowadzać takie rozróżnienie
+✔ video_id/trending_date - metadane,
 
-✔ views/likes/dislikes/comment_count - atrybuty, które będą przydatne przy uczeniu klasyfikatora i być może przy etykietowaniu, dla klienta większej informacji nie niosą, gdyż nie ma on na nie wpływu w momencie tworzenia materiału.
+❌ title/tags/description - nie wykorzystujemy bezpośrednio tej informacji, jedynie już przetworzone dane w innych atrybutach,
 
-❌ comments/ratings_disabled - nieprzydatne, jako że filmy blokujące komentarze/oceny stanowią drobny odsetek wszystkich filmów, a rozkłady wartości pozostałych atrybutów nie są od tego zależne
+❌ country_code - niezbyt istotny atrybut, analiza pokazuje, że dane dla regionów GB i US nie różnią się znacząco i nie ma większej potrzeby by wprowadzać takie rozróżnienie,
 
-✔ trending_count - atrybut potrzebny do odpowiedniego ważenia niektórych przypadków w przypadku uczenia modeli
+✔ views/likes/dislikes/comment_count - atrybuty, które będą przydatne przy uczeniu klasyfikatora i być może przy etykietowaniu, dla klienta większej informacji nie niosą, gdyż nie ma on na nie wpływu w momencie tworzenia materiału. Wysoka korelacja sugeruje redukcję atrybutów do jednego, ale być może po uwzględnieniu zbioru filmów non-trending zauważymy inne relacje tych atrybutów względem siebie, dlatego na ten moment zachowujemy je wszystkie.
+
+❌ comments/ratings_disabled - nieprzydatne, jako że filmy blokujące komentarze/oceny stanowią drobny odsetek wszystkich filmów, a rozkłady wartości pozostałych atrybutów nie są od tego zależne,
+
+✔ trending_count - atrybut potrzebny do odpowiedniego ważenia niektórych przypadków w przypadku uczenia modeli,
 
 ✔ likes/dislikes/comment_count ratio - na tym etapie nie jesteśmy w stanie powiedzieć czy atrybut na pewno się nie przyda przy klasyfikacji trending/non-trending, dlatego zachowamy atrybut do momentu, gdy będziemy znali rozkład wartości dla filmów non-trending.
 
-✔ title_length - atrybut prawdopodobnie nieprzydatny w etykietowaniu, ale może się przydać przy klasyfikatorze, niesie również pewną wiedzę dla klienta
+✔ title_length - atrybut prawdopodobnie nieprzydatny w etykietowaniu, ale może się przydać przy klasyfikatorze, niesie również pewną wiedzę dla klienta,
 
-✔ description_length - j/w
+✔ description_length - j/w,
 
-❌ publish_time(year/month) - miesiąc i rok publikacji z pewnością nie mają większego znaczenia, dla klienta tym bardziej jest to bezużyteczna informacja
+❌ publish_time(year/month) - miesiąc i rok publikacji z pewnością nie mają większego znaczenia, dla klienta tym bardziej jest to bezużyteczna informacja,
 
-❌ days_from_publish_time_to_trending_date - atrybut raczej nieprzydatny, nie można go użyć do nauki klasyfikatora, a dla klienta może stanowić jedynie ciekawostkę (gdy np. chce oszacować szanse na dostanie się na kartę trending, już PO wrzuceniu materiału)
+❌ days_from_publish_time_to_trending_date - atrybut raczej nieprzydatny, nie można go użyć do nauki klasyfikatora, a dla klienta może stanowić jedynie ciekawostkę (gdy np. chce oszacować szanse na dostanie się na kartę trending, już PO wrzuceniu materiału),
 
 ✔ number_of_tags/links - może się przydać na późniejszym etapie projektu, w przypadku porównania z filmami non-trending, niesie również pewną wiedzą dla klienta.
 
 
-✔ category_id - filmy zawierające ten atrybut stanowią mniejszość, ale atrybut będzie niezbędny przy zadaniu etykietowania, a także być może ujawni dodatkowe informacje dla klienta, gdy poszerzymy zbiór danych o filmy non-trending
+✔ category_id - filmy zawierające ten atrybut stanowią mniejszość, ale atrybut będzie niezbędny przy zadaniu etykietowania, a także być może ujawni dodatkowe informacje dla klienta, gdy poszerzymy zbiór danych o filmy non-trending,
 
 ❌ video_has_category - jedyna informacja, którą ten atrybut niesie, to stosunek liczby filmów z- i bez kategorii. 
 
-❌ publish_time_month - zakładamy że miesiąc, w którym opublikowano film nie ma znaczenia na żadnym kolejnym etapie projektu, dlatego całkowicie go odrzucamy
+❌ publish_time_month - zakładamy że miesiąc, w którym opublikowano film nie ma znaczenia na żadnym kolejnym etapie projektu, dlatego całkowicie go odrzucamy,
 
-❌ average/mode red/green/blue, rms contrast - atrybuty być może stanowiące jakąś wartość przy zadaniu etykietowania i klasyfikacji, ale nie dające żadnej wiedzy klientowi (uśrednione wartości w większości przypadków stanowią zbyt zdegenerowaną informację)
+❌ average/mode red/green/blue, rms contrast - atrybuty być może stanowiące jakąś wartość przy zadaniu etykietowania i klasyfikacji, ale nie dające żadnej wiedzy klientowi (uśrednione wartości w większości przypadków stanowią zbyt zdegenerowaną informację),
 
-✔ average/mode hue/saturation/value - te atrybuty, ze względu na przestrzeń HSV, dają już pewną informację klientowi, taką jak preferowany dobór barwy i jasności, dodatkowo tak jak powyższa grupa atrybutów mogą się również przydać przy etykietowaniu i klasyfikacji
+✔ average/mode hue/saturation/value - te atrybuty, ze względu na przestrzeń HSV, dają już pewną informację klientowi, taką jak preferowany dobór barwy i jasności, dodatkowo tak jak powyższa grupa atrybutów mogą się również przydać przy etykietowaniu i klasyfikacji,
 
 ✔ hue_red/yellow/green/cyan/blue/magenta - jak wyżej, przydatny atrybut, który pozwala ocenić, które kolory występują częściej w filmach trendujących, można to wykorzystać zarówno do zadania etykietowania, jak i w pozyskaniu wiedzy dla klienta,
 
