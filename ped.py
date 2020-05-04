@@ -260,19 +260,19 @@ data['mode_hue'], data['mode_saturation'], data['mode_value'], \
 data['hue_red'], data['hue_yellow'], data['hue_green'], data['hue_cyan'], data['hue_blue'], data['hue_magenta'], \
 data['rms_contrast'] = zip(*data['video_id'].map(lambda video_id: load_and_process_rgb_thumbnail(video_id)))
 
-# # Dodanie atrybutów wyrażających emocję na miniaturce ('angry','disgust','fear','happy','sad','surprise','neutral')
-# emotion_vectors = pd.read_csv("emotions_hq.csv", delimiter=',')
-# data = pd.merge(data, emotion_vectors, how='left', on='video_id')
-#
-# # Wykres pudełkowy liczby pikseli obrazka dla każdego z odcieni hue
-# hue_colors = ['hue_red', 'hue_yellow', 'hue_green', 'hue_cyan', 'hue_blue', 'hue_magenta']
-# data.boxplot(column=hue_colors)
-# plt.title("Liczba pikseli w danym odcieniu Hue")
-# plt.show()
-#
-# # Wypisanie statystyk
-# for column in hue_colors:
-#     print(data[column].describe())
+# Dodanie atrybutów wyrażających emocję na miniaturce ('angry','disgust','fear','happy','sad','surprise','neutral')
+emotion_vectors = pd.read_csv("emotions_hq.csv", delimiter=',')
+data = pd.merge(data, emotion_vectors, how='left', on='video_id')
+
+# Wykres pudełkowy liczby pikseli obrazka dla każdego z odcieni hue
+hue_colors = ['hue_red', 'hue_yellow', 'hue_green', 'hue_cyan', 'hue_blue', 'hue_magenta']
+data.boxplot(column=hue_colors)
+plt.title("Liczba pikseli w danym odcieniu Hue")
+plt.show()
+
+# Wypisanie statystyk
+for column in hue_colors:
+    print(data[column].describe())
 
 # Wypisanie statystyk liczby emocji dla wszystkich obrazków w podziale na typ
 emotion_count = {}
