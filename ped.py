@@ -6,9 +6,14 @@ import numpy as np
 import urllib.request
 import urllib.error
 import os.path
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import recall_score
 
 
 # Funkcja mapująca thumbnail_link na video_id
+
+
 def map_video_id_from_thumbnail_link(thumbnail_link):
     return thumbnail_link.split(sep='/')[-2]
 
@@ -256,41 +261,60 @@ data['mode_hue'], data['mode_saturation'], data['mode_value'], \
 data['hue_red'], data['hue_yellow'], data['hue_green'], data['hue_cyan'], data['hue_blue'], data['hue_magenta'], \
 data['rms_contrast'] = zip(*data['video_id'].map(lambda video_id: load_and_process_rgb_thumbnail(video_id)))
 
-# Dodanie atrybutów wyrażających emocję na miniaturce ('angry','disgust','fear','happy','sad','surprise','neutral')
-emotion_vectors = pd.read_csv("emotions_hq.csv", delimiter=',')
-data = pd.merge(data, emotion_vectors, how='left', on='video_id')
+# # Dodanie atrybutów wyrażających emocję na miniaturce ('angry','disgust','fear','happy','sad','surprise','neutral')
+# emotion_vectors = pd.read_csv("emotions_hq.csv", delimiter=',')
+# data = pd.merge(data, emotion_vectors, how='left', on='video_id')
+#
+# # Wykres pudełkowy liczby pikseli obrazka dla każdego z odcieni hue
+# hue_colors = ['hue_red', 'hue_yellow', 'hue_green', 'hue_cyan', 'hue_blue', 'hue_magenta']
+# data.boxplot(column=hue_colors)
+# plt.title("Liczba pikseli w danym odcieniu Hue")
+# plt.show()
+#
+# # Wypisanie statystyk
+# for column in hue_colors:
+#     print(data[column].describe())
 
-# Wykres pudełkowy liczby pikseli obrazka dla każdego z odcieni hue
-hue_colors = ['hue_red', 'hue_yellow', 'hue_green', 'hue_cyan', 'hue_blue', 'hue_magenta']
-data.boxplot(column=hue_colors)
-plt.title("Liczba pikseli w danym odcieniu Hue")
-plt.show()
+# # Wypisanie statystyk liczby emocji dla wszystkich obrazków w podziale na typ
+# emotion_count = {}
+# for emotion in ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']:
+#     count = np.count_nonzero(data[emotion] > 0)
+#     emotion_count[emotion] = count
+#     print(emotion + ": " + str(count))
+#
+# # Rysowanie wykresu liczby emocji dla wszystkich obrazków w podziale na typ
+# plt.bar(emotion_count.keys(), emotion_count.values())
+# plt.title("Emotion counts")
+# plt.show()
 
-# Wypisanie statystyk
-for column in hue_colors:
-    print(data[column].describe())
+# # Rysowanie wykresu korelacji atrybutów
+# f = plt.figure(figsize=(30, 30))
+# plt.matshow(data.corr(), fignum=f.number, cmap=plt.cm.get_cmap("coolwarm"))
+# plt.xticks(range(data.corr().shape[1]), data.corr().columns, fontsize=20, rotation=90)
+# plt.yticks(range(data.corr().shape[1]), data.corr().columns, fontsize=20)
+# cb = plt.colorbar()
+# cb.ax.tick_params(labelsize=15)
+# plt.suptitle("Correlation", fontsize=64)
+# plt.show()
+#
+# # Wypisanie macierzy korelacji
+# print(data.corr())
 
-# Wypisanie statystyk liczby emocji dla wszystkich obrazków w podziale na typ
-emotion_count = {}
-for emotion in ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']:
-    count = np.count_nonzero(data[emotion] > 0)
-    emotion_count[emotion] = count
-    print(emotion + ": " + str(count))
+data_with_category = data.loc[data["category"].notnull() & data["average_red"].notna()]
+features = data_with_category[data_with_category.columns.difference(
+    ["category", "video_id", "first_trending_date", "title", "channel_title", "publish_time", "tags", "thumbnail_link",
+     "description", "country", "last_trending_date"], sort=False)].copy()
+target = data_with_category["category"].copy()
 
-# Rysowanie wykresu liczby emocji dla wszystkich obrazków w podziale na typ
-plt.bar(emotion_count.keys(), emotion_count.values())
-plt.title("Emotion counts")
-plt.show()
+random_forest = RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1)
+x_train, x_val_res, y_train, y_val_res = train_test_split(features,
+                                                          target,
+                                                          test_size=.1,
+                                                          random_state=12)
 
-# Rysowanie wykresu korelacji atrybutów
-f = plt.figure(figsize=(30, 30))
-plt.matshow(data.corr(), fignum=f.number, cmap=plt.cm.get_cmap("coolwarm"))
-plt.xticks(range(data.corr().shape[1]), data.corr().columns, fontsize=20, rotation=90)
-plt.yticks(range(data.corr().shape[1]), data.corr().columns, fontsize=20)
-cb = plt.colorbar()
-cb.ax.tick_params(labelsize=15)
-plt.suptitle("Correlation", fontsize=64)
-plt.show()
+# sm = SMOTE(random_state=12)
+# x_train_res, y_train_res = sm.fit_sample(x_train, y_train)
 
-# Wypisanie macierzy korelacji
-print(data.corr())
+
+random_forest.fit(x_train, y_train)
+print(random_forest.score(x_val_res, y_val_res))
