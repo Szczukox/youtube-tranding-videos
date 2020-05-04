@@ -1,19 +1,18 @@
+import os.path
+import urllib.error
+import urllib.request
+
+import cv2
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
-import matplotlib.pyplot as plt
-import cv2
-import numpy as np
-import urllib.request
-import urllib.error
-import os.path
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import recall_score
 
 
 # Funkcja mapująca thumbnail_link na video_id
-
-
 def map_video_id_from_thumbnail_link(thumbnail_link):
     return thumbnail_link.split(sep='/')[-2]
 
@@ -275,46 +274,54 @@ data['rms_contrast'] = zip(*data['video_id'].map(lambda video_id: load_and_proce
 # for column in hue_colors:
 #     print(data[column].describe())
 
-# # Wypisanie statystyk liczby emocji dla wszystkich obrazków w podziale na typ
-# emotion_count = {}
-# for emotion in ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']:
-#     count = np.count_nonzero(data[emotion] > 0)
-#     emotion_count[emotion] = count
-#     print(emotion + ": " + str(count))
-#
-# # Rysowanie wykresu liczby emocji dla wszystkich obrazków w podziale na typ
-# plt.bar(emotion_count.keys(), emotion_count.values())
-# plt.title("Emotion counts")
-# plt.show()
+# Wypisanie statystyk liczby emocji dla wszystkich obrazków w podziale na typ
+emotion_count = {}
+for emotion in ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']:
+    count = np.count_nonzero(data[emotion] > 0)
+    emotion_count[emotion] = count
+    print(emotion + ": " + str(count))
 
-# # Rysowanie wykresu korelacji atrybutów
-# f = plt.figure(figsize=(30, 30))
-# plt.matshow(data.corr(), fignum=f.number, cmap=plt.cm.get_cmap("coolwarm"))
-# plt.xticks(range(data.corr().shape[1]), data.corr().columns, fontsize=20, rotation=90)
-# plt.yticks(range(data.corr().shape[1]), data.corr().columns, fontsize=20)
-# cb = plt.colorbar()
-# cb.ax.tick_params(labelsize=15)
-# plt.suptitle("Correlation", fontsize=64)
-# plt.show()
-#
-# # Wypisanie macierzy korelacji
-# print(data.corr())
+# Rysowanie wykresu liczby emocji dla wszystkich obrazków w podziale na typ
+plt.bar(emotion_count.keys(), emotion_count.values())
+plt.title("Emotion counts")
+plt.show()
 
+# Rysowanie wykresu korelacji atrybutów
+f = plt.figure(figsize=(30, 30))
+plt.matshow(data.corr(), fignum=f.number, cmap=plt.cm.get_cmap("coolwarm"))
+plt.xticks(range(data.corr().shape[1]), data.corr().columns, fontsize=20, rotation=90)
+plt.yticks(range(data.corr().shape[1]), data.corr().columns, fontsize=20)
+cb = plt.colorbar()
+cb.ax.tick_params(labelsize=15)
+plt.suptitle("Correlation", fontsize=64)
+plt.show()
+
+# Wypisanie macierzy korelacji
+print(data.corr())
+
+# Z całego zbioru danych wybieramy te filmy, które mają opisaną kategorią i mają miniaturkę
 data_with_category = data.loc[data["category"].notnull() & data["average_red"].notna()]
+
+# Wyznaczony zbiór dzielimy na zbiór atrybutów i klas
 features = data_with_category[data_with_category.columns.difference(
     ["category", "video_id", "first_trending_date", "title", "channel_title", "publish_time", "tags", "thumbnail_link",
      "description", "country", "last_trending_date"], sort=False)].copy()
 target = data_with_category["category"].copy()
 
-random_forest = RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1)
-x_train, x_val_res, y_train, y_val_res = train_test_split(features,
-                                                          target,
-                                                          test_size=.1,
-                                                          random_state=12)
+# Wyznaczamy wagi klas dla random forest
+category_dict = data_with_category['category'].value_counts(dropna=True).to_dict()
+max_category_count = max(category_dict.values())
+category_weight = {k: max_category_count / v for k, v in category_dict.items()}
 
-# sm = SMOTE(random_state=12)
-# x_train_res, y_train_res = sm.fit_sample(x_train, y_train)
-
-
+# Tworzymy i trenujemy klasyfikator
+random_forest = RandomForestClassifier(max_depth=10, min_samples_leaf=4, min_samples_split=10, n_estimators=300,
+                                       max_features='auto', class_weight=category_weight, random_state=12)
+x_train, x_test, y_train, y_test = train_test_split(features, target, test_size=0.1, random_state=12)
 random_forest.fit(x_train, y_train)
-print(random_forest.score(x_val_res, y_val_res))
+y_pred = random_forest.predict(x_test)
+
+# Statystyki klasyfikatora
+print("Classification Report")
+print(classification_report(y_test, y_pred))
+print("Confusion Matrix")
+print(confusion_matrix(y_test, y_pred))
