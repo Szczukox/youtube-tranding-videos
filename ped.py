@@ -299,6 +299,9 @@ plt.show()
 # Wypisanie macierzy korelacji
 print(data.corr())
 
+# Zapisanie danych do pliku
+data.to_csv("trending.csv", index=False, sep=";")
+
 # Z całego zbioru danych wybieramy te filmy, które mają opisaną kategorią i mają miniaturkę
 data_with_category = data.loc[data["category"].notnull() & data["average_red"].notna()]
 
