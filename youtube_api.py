@@ -4,7 +4,7 @@ import pandas as pd
 
 def search_related_video_id_from_youtube_data_api(video_id):
     params = {
-        'key': '',
+        'key': 'AIzaSyAgTcCIXXsgffo8ApEk9Gdrxc3Z9QUuxyg',
         'maxResults': 50,
         'order': 'relevance',
         'part': 'id',
@@ -20,13 +20,16 @@ def search_related_video_id_from_youtube_data_api(video_id):
         for item in response.json()['items']:
             videos.append(item['id']['videoId'])
 
+    if response.status_code != 403:
+        processed_trending.append(video_id)
+
     return videos
 
 
 def find_videos_content_by_ids_from_youtube_data_api(video_ids):
     video_data = {}
     params = {
-        'key': '',
+        'key': 'AIzaSyAgTcCIXXsgffo8ApEk9Gdrxc3Z9QUuxyg',
         'id': ','.join(video_ids),
         'part': 'id,snippet,statistics'
     }
@@ -76,12 +79,13 @@ def map_video_content_to_data_frame_series(video_data, non_trending):
     return non_trending
 
 
-trending_date = pd.read_csv("trending.csv", sep=";")
-trending_video_ids = trending_date['video_id'].to_list()
+trending = pd.read_csv("trending.csv", sep=";")
+trending_video_ids = trending['video_id'].to_list()
 
-non_trending = pd.DataFrame(
-    columns=["video_id", "title", "channel_title", "category_id", "publish_time", "tags", "views", "likes", "dislikes",
-             "comment_count", "thumbnail_link", "comments_disabled", "ratings_disabled", "description"])
+non_trending = pd.read_csv("video_from_youtube_data_api.csv", sep=";")
+processed_trending = pd.read_csv("processed_trending.csv", header=None)[0].to_list()
+
+trending = trending.loc[~trending["video_id"].isin(processed_trending)]
 
 for trending_video_id in trending_video_ids:
     related_video_ids = search_related_video_id_from_youtube_data_api(trending_video_id)
@@ -90,5 +94,6 @@ for trending_video_id in trending_video_ids:
     video_data = find_videos_content_by_ids_from_youtube_data_api(non_trending_video_ids)
     non_trending = map_video_content_to_data_frame_series(video_data, non_trending)
 
+pd.DataFrame({"video_id": processed_trending}).to_csv("processed_trending.csv.csv", index=False, sep=";", header=None)
 non_trending.drop_duplicates(subset=["video_id"])
 non_trending.to_csv("video_from_youtube_data_api.csv", index=False, sep=";")
