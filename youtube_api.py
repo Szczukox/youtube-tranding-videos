@@ -4,21 +4,21 @@ import pandas as pd
 
 def search_related_video_id_from_youtube_data_api(video_id):
     params = {
-        'key': 'AIzaSyAgTcCIXXsgffo8ApEk9Gdrxc3Z9QUuxyg',
-        'maxResults': 50,
-        'order': 'relevance',
-        'part': 'id',
-        'publishedAfter': '2017-11-17T00:00:00Z',
-        'publishedBefore': '2018-06-14T00:00:00Z',
-        'relatedToVideoId': video_id,
-        'type': 'video'
+        "key": "AIzaSyAgTcCIXXsgffo8ApEk9Gdrxc3Z9QUuxyg",
+        "maxResults": 50,
+        "order": "relevance",
+        "part": "id",
+        "publishedAfter": "2017-11-17T00:00:00Z",
+        "publishedBefore": "2018-06-14T00:00:00Z",
+        "relatedToVideoId": video_id,
+        "type": "video"
     }
 
-    response = requests.get('https://www.googleapis.com/youtube/v3/search', params=params)
+    response = requests.get("https://www.googleapis.com/youtube/v3/search", params=params)
     videos = []
     if response.status_code == 200:
-        for item in response.json()['items']:
-            videos.append(item['id']['videoId'])
+        for item in response.json()["items"]:
+            videos.append(item["id"]["videoId"])
 
     if response.status_code != 403:
         processed_trending.append(video_id)
@@ -29,15 +29,15 @@ def search_related_video_id_from_youtube_data_api(video_id):
 def find_videos_content_by_ids_from_youtube_data_api(video_ids):
     video_data = {}
     params = {
-        'key': 'AIzaSyAgTcCIXXsgffo8ApEk9Gdrxc3Z9QUuxyg',
-        'id': ','.join(video_ids),
-        'part': 'id,snippet,statistics'
+        "key": "AIzaSyAgTcCIXXsgffo8ApEk9Gdrxc3Z9QUuxyg",
+        "id": ','.join(video_ids),
+        "part": "id,snippet,statistics"
     }
 
-    response = requests.get('https://www.googleapis.com/youtube/v3/videos', params=params)
+    response = requests.get("https://www.googleapis.com/youtube/v3/videos", params=params)
     if response.status_code == 200:
-        for item in response.json()['items']:
-            video_data[item['id']] = item
+        for item in response.json()["items"]:
+            video_data[item["id"]] = item
 
     return video_data
 
@@ -46,20 +46,20 @@ def map_video_content_to_data_frame_series(video_data, non_trending):
     for video_content in video_data.values():
         video_id = video_content["id"]
 
-        snippet = video_content['snippet']
-        title = snippet.get('title', '')
-        channel_title = snippet.get('channelTitle', '')
-        category_id = int(snippet.get('categoryId', ''))
-        publish_time = snippet['publishedAt']
-        tags = snippet.get('tags', [])
-        thumbnail_link = snippet['thumbnails']['default']['url']
-        description = snippet.get('description', '')
+        snippet = video_content["snippet'"]
+        title = snippet.get("title", "")
+        channel_title = snippet.get("channelTitle", "")
+        category_id = int(snippet.get("categoryId", ""))
+        publish_time = snippet["publishedAt"]
+        tags = snippet.get("tags", [])
+        thumbnail_link = snippet["thumbnails"]["default"]["url"]
+        description = snippet.get("description", "")
 
-        statistics = video_content['statistics']
-        views = statistics.get('viewCount', 0)
-        likes = statistics.get('likeCount', 0)
-        dislikes = statistics.get('dislikeCount', 0)
-        comment_count = statistics.get('commentCount', 0)
+        statistics = video_content["statistics"]
+        views = statistics.get("viewCount", 0)
+        likes = statistics.get("likeCount", 0)
+        dislikes = statistics.get("dislikeCount", 0)
+        comment_count = statistics.get("commentCount", 0)
 
         if likes == 0 and dislikes == 0:
             ratings_disabled = True
@@ -80,7 +80,7 @@ def map_video_content_to_data_frame_series(video_data, non_trending):
 
 
 trending = pd.read_csv("trending.csv", sep=";")
-trending_video_ids = trending['video_id'].to_list()
+trending_video_ids = trending["video_id"].to_list()
 
 non_trending = pd.read_csv("video_from_youtube_data_api.csv", sep=";")
 processed_trending = pd.read_csv("processed_trending.csv", header=None)[0].to_list()
