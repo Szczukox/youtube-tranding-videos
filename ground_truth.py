@@ -20,5 +20,11 @@ def get_category_from_youtube_data_api(video_id):
 
 trending = pd.read_csv("trending.csv", sep=";")
 trending = trending.loc[trending["category"].isna()]
-trending["category"] = trending['video_id'].apply(get_category_from_youtube_data_api)
+
+processed_trending = pd.read_csv("processed_trending_ground_truth.csv", header=None)[0].to_list()
+
+trending = trending.loc[~trending["video_id"].isin(processed_trending)]
+
+trending["category"] = trending["video_id"].apply(get_category_from_youtube_data_api)
+
 trending.to_csv("trending_with_category.csv", index=False, sep=";")
