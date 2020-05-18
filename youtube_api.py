@@ -1,6 +1,8 @@
 import requests
 import pandas as pd
 
+is_403 = False
+
 
 def search_related_video_id_from_youtube_data_api(video_id):
     params = {
@@ -20,9 +22,11 @@ def search_related_video_id_from_youtube_data_api(video_id):
         for item in response.json()["items"]:
             videos.append(item["id"]["videoId"])
 
+    global is_403
     if response.status_code != 403:
         processed_trending.append(video_id)
-
+    else:
+        is_403 = True
     return videos
 
 
@@ -93,6 +97,8 @@ for trending_video_id in trending_video_ids:
                               related_video_id not in trending_video_ids]
     video_data = find_videos_content_by_ids_from_youtube_data_api(non_trending_video_ids)
     non_trending = map_video_content_to_data_frame_series(video_data, non_trending)
+    if is_403:
+        break
 
 pd.DataFrame({"video_id": processed_trending}).to_csv("processed_trending.csv.csv", index=False, sep=";", header=None)
 non_trending.drop_duplicates(subset=["video_id"])
