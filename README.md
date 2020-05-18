@@ -182,3 +182,7 @@ Korelacje views/likes/comment count od miesiąca publikacji również nie ujawni
 - Druga metoda stanowi rozszerzenie pierwszej, tj. wykorzystuje Random Forest z uwzględnieniem wag dla poszczególnych klas. Wagi klas są tworzone za jako stosunek liczby przykładów z klasy najbardziej licznej do liczby przykładów z danej klasy. Dzięki takiemu zabiegowi karzemy klasyfikator bardziej za błędne sklasyfikowanie przykładu z klas mniejszościowych niż z klas dominujących. Ma to na celu zmniejszyć tendencyjność klasyfikatora w stosunku do klas większościowych. Metoda ta uzyskuje nieco lepsze wyniki, tj. accuracy i recall na poziomie 33%.
 - Obie metody są do siebie zbliżone, zdecydowaliśmy się na wybór drugiej, ponieważ daje nieco lepsze wyniki i w teorii powinna działać lepiej, w szczególności na większych zbiorach danych. W następnym etapie możemy zweryfikować ponownie działanie obu metod w ramach sprawdzenia czy faktycznie tak jest.
 
+## Etap 5
+### W ramach tego etapu zostały pobrane dane z non-trending filmikami z tego samego okresu co oryginalny zbiór danych. Zostało to osiągnięte poprzez użycie Youtube API i przeglądanie "related videos" dla filmów trending. Zgromadzony zbiór danych po odpowiednim przefiltrowaniu i usunięciu duplikatów jest podobnych rozmiarów co zbiór danych z filmikami trending.
+Na pobranym zbiorze danych zostały wykonane analogiczne algorytmy przetwarzania obrazów i na tej samej zasadzie utworzone zostały dodatkowe atrybuty, które wykorzystywaliśmy do tej pory przy zbiorze trending.
+
