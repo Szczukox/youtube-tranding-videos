@@ -4,7 +4,7 @@ import pandas as pd
 
 def get_category_from_youtube_data_api(video_id):
     params = {
-        "key": "AIzaSyB6pH3bqOztaQnc2hW39-MC8fDWlNvO2A0",
+        "key": "AIzaSyAqG4O_DGut3Vtl6XFA_zPYQz526yquV1Y",
         "id": video_id,
         "part": "snippet"
     }
