@@ -50,7 +50,7 @@ def map_video_content_to_data_frame_series(video_data, non_trending):
     for video_content in video_data.values():
         video_id = video_content["id"]
 
-        snippet = video_content["snippet'"]
+        snippet = video_content["snippet"]
         title = snippet.get("title", "")
         channel_title = snippet.get("channelTitle", "")
         category_id = int(snippet.get("categoryId", ""))
@@ -84,12 +84,11 @@ def map_video_content_to_data_frame_series(video_data, non_trending):
 
 
 trending = pd.read_csv("trending.csv", sep=";")
+processed_trending = pd.read_csv("processed_trending.csv", header=None)[0].to_list()
+trending = trending.loc[~trending["video_id"].isin(processed_trending)]
 trending_video_ids = trending["video_id"].to_list()
 
 non_trending = pd.read_csv("video_from_youtube_data_api.csv", sep=";")
-processed_trending = pd.read_csv("processed_trending.csv", header=None)[0].to_list()
-
-trending = trending.loc[~trending["video_id"].isin(processed_trending)]
 
 for trending_video_id in trending_video_ids:
     related_video_ids = search_related_video_id_from_youtube_data_api(trending_video_id)
