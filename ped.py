@@ -191,7 +191,7 @@ category_names = pd.read_json('US_category_id.json')
 # Przemapowanie ID kategorii na jej nazwę
 category_mapping = dict(
     category_names['items'].map(lambda items: extract_category_with_id_from_json_items(items)).tolist())
-data['category_id'].replace(category_mapping, inplace=True)
+data['category'].replace(category_mapping, inplace=True)
 
 # W związku z zastąpieniem ID kategorii przez jej nazwę to zmiana nazwy atrybutu
 data = data.rename(columns={"category_id": "category"})
