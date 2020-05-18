@@ -6,7 +6,7 @@ is_403 = False
 
 def search_related_video_id_from_youtube_data_api(video_id):
     params = {
-        "key": "AIzaSyAgTcCIXXsgffo8ApEk9Gdrxc3Z9QUuxyg",
+        "key": "AIzaSyB6pH3bqOztaQnc2hW39-MC8fDWlNvO2A0",
         "maxResults": 50,
         "order": "relevance",
         "part": "id",
@@ -33,7 +33,7 @@ def search_related_video_id_from_youtube_data_api(video_id):
 def find_videos_content_by_ids_from_youtube_data_api(video_ids):
     video_data = {}
     params = {
-        "key": "AIzaSyAgTcCIXXsgffo8ApEk9Gdrxc3Z9QUuxyg",
+        "key": "AIzaSyB6pH3bqOztaQnc2hW39-MC8fDWlNvO2A0",
         "id": ','.join(video_ids),
         "part": "id,snippet,statistics"
     }
