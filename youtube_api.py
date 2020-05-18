@@ -10,7 +10,7 @@ def search_related_video_id_from_youtube_data_api(video_id):
         "maxResults": 50,
         "order": "relevance",
         "part": "id",
-        "publishedAfter": "2017-11-17T00:00:00Z",
+        "publishedAfter": "2017-11-14T00:00:00Z",
         "publishedBefore": "2018-06-14T00:00:00Z",
         "relatedToVideoId": video_id,
         "type": "video"
@@ -85,7 +85,6 @@ def map_video_content_to_data_frame_series(video_data, non_trending):
 
 trending = pd.read_csv("trending.csv", sep=";")
 processed_trending = pd.read_csv("processed_trending.csv", header=None)[0].to_list()
-lol = pd.read_csv("processed_trending.csv", header=None)[0].to_list()
 trending = trending.loc[~trending["video_id"].isin(processed_trending)]
 trending_video_ids = trending["video_id"].to_list()
 
@@ -99,6 +98,15 @@ for trending_video_id in trending_video_ids:
     non_trending = map_video_content_to_data_frame_series(video_data, non_trending)
     if is_403:
         break
+
+non_trending["publish_time"] = non_trending["publish_time"].map(
+    lambda publish_time: pd.Timestamp(pd.Timestamp(publish_time).date()))
+
+min_trending_date = pd.Timestamp(trending["first_trending_date"].min())
+max_trending_date = pd.Timestamp(trending["first_trending_date"].max())
+
+non_trending = non_trending.loc[
+    (non_trending["publish_time"] > min_trending_date) & (non_trending["publish_time"] < max_trending_date)]
 
 pd.DataFrame({"video_id": processed_trending}).to_csv("processed_trending.csv", index=False, sep=";", header=None)
 non_trending.drop_duplicates(subset=["video_id"])
