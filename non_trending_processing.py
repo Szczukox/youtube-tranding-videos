@@ -7,9 +7,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import confusion_matrix, classification_report
-from sklearn.model_selection import train_test_split
 
 
 # Funkcja obliczająca liczbę tagów z atrybutu tags
@@ -30,29 +27,16 @@ def extract_category_with_id_from_json_items(items):
     return int(category_id), category
 
 
-# Funkcja pobierająca miniaturke w rozdzielczości 480x360 z podanego linku
-def download_hq_thumbnail(thumbnail_link, video_id):
-    if not os.path.exists("thumbnails_hq\\" + video_id + ".png"):
-        try:
-            index = thumbnail_link.find("default.jpg")
-            resp = urllib.request.urlopen(thumbnail_link[:index] + "hq" + thumbnail_link[index:])
-            image = np.asarray(bytearray(resp.read()), dtype="uint8")
-            image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-            cv2.imwrite("thumbnails_hq\\" + video_id + ".png", image)
-        except urllib.error.HTTPError:
-            pass
-
-
 # Funkcja wczytująca i przetwarzająca miniaturkę (obicięcie 10 górnych i dolnych pikseli w celi wyeliminowania czarnych pasków)
 def load_and_process_rgb_thumbnail(video_id):
     try:
-        image = cv2.imread("thumbnails\\" + video_id + ".png")[10:-10]
+        image = cv2.imread("non_trending_thumbnails\\" + video_id + ".png")[10:-10]
         image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         return np.concatenate((extract_average(image), extract_mode(image),
                                extract_average(image_hsv), extract_mode(image_hsv),
                                extract_count_pixels_by_hue(image_hsv), extract_rms_contrast(image_gray)), axis=None)
-    except:
+    except Exception:
         return 19 * ([float("NaN")])
 
 
@@ -100,6 +84,9 @@ data['comment_count_views_ratio'] = data['comment_count'] / data['views']
 # Dodanie atrybutów: długości tytułu oraz długości opisu
 data['title_length'] = data.apply(lambda row: len(row['title']), axis=1)
 data['description_length'] = data.apply(lambda row: len(str(row['description'])), axis=1)
+
+data["publish_time"] = data["publish_time"].map(
+    lambda publish_time: pd.Timestamp(pd.Timestamp(publish_time).date()))
 
 # Utworzenie dwóch nowych atrybutów: rok oraz miesiąc publikacji
 data['publish_time_year'] = data['publish_time'].map(lambda publish_time: publish_time.year)
@@ -194,7 +181,7 @@ data['hue_red'], data['hue_yellow'], data['hue_green'], data['hue_cyan'], data['
 data['rms_contrast'] = zip(*data['video_id'].map(lambda video_id: load_and_process_rgb_thumbnail(video_id)))
 
 # Dodanie atrybutów wyrażających emocję na miniaturce ('angry','disgust','fear','happy','sad','surprise','neutral')
-emotion_vectors = pd.read_csv("emotions_hq.csv", delimiter=',')
+emotion_vectors = pd.read_csv("non_trending_emotions_hq.csv", delimiter=',')
 data = pd.merge(data, emotion_vectors, how='left', on='video_id')
 
 # Wykres pudełkowy liczby pikseli obrazka dla każdego z odcieni hue
@@ -234,30 +221,3 @@ print(data.corr())
 
 # Zapisanie danych do pliku
 data.to_csv("non_trending.csv", index=False, sep=";")
-
-# Z całego zbioru danych wybieramy te filmy, które mają opisaną kategorią i mają miniaturkę
-data_with_category = data.loc[data["category"].notnull() & data["average_red"].notna()]
-
-# Wyznaczony zbiór dzielimy na zbiór atrybutów i klas
-features = data_with_category[data_with_category.columns.difference(
-    ["category", "video_id", "title", "channel_title", "publish_time", "tags", "thumbnail_link", "description"],
-    sort=False)].copy()
-target = data_with_category["category"].copy()
-
-# Wyznaczamy wagi klas dla random forest
-category_dict = data_with_category['category'].value_counts(dropna=True).to_dict()
-max_category_count = max(category_dict.values())
-category_weight = {k: max_category_count / v for k, v in category_dict.items()}
-
-# Tworzymy i trenujemy klasyfikator
-random_forest = RandomForestClassifier(max_depth=10, min_samples_leaf=4, min_samples_split=10, n_estimators=300,
-                                       max_features='auto', class_weight=category_weight, random_state=12)
-x_train, x_test, y_train, y_test = train_test_split(features, target, test_size=0.1, random_state=12)
-random_forest.fit(x_train, y_train)
-y_pred = random_forest.predict(x_test)
-
-# Statystyki klasyfikatora
-print("Classification Report")
-print(classification_report(y_test, y_pred))
-print("Confusion Matrix")
-print(confusion_matrix(y_test, y_pred))
