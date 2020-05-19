@@ -42,7 +42,7 @@ features_ground_truth = ground_truth[ground_truth.columns.difference(
      "description", "country", "last_trending_date"], sort=False)].copy()
 target_ground_truth = ground_truth["category"].copy()
 
-train_x, test_x, train_y, test_y = train_test_split(features, target, test_size=0.00001, random_state=12)
+train_x, test_x, train_y, test_y = train_test_split(features_ground_truth, target_ground_truth, test_size=0.000000001, random_state=12)
 
 pred_ground_truth = random_forest.predict(train_x)
 
