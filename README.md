@@ -200,24 +200,26 @@ Jeśli chodzi o długość tytułu, to filmiki trending miały go średnio krót
 W przypadku miesiąca publikacji rozkład jest podobny (takie było zamierzenie), jedynie dla grudnia liczba filmów non-trending jest sporo większa od trending.
 W przypadku liczby wyświetleń filmy non-trending zdają się mieć ich średnio nieco więcej. Być może wynika to z tego, w jaki sposób Youtube pokazuje related videos. Prawdopodobnie faworyzowane są filmy z większą liczbą wyświetleń.
 Liczba lajków jest średnio trochę większa przy filmach trending. Liczba komentarzy ma podobny rozkład wartości dla obu wersji. Zaskakująco rozkład kolorów pikseli dla obu zbiorów jest bardzo zbliżony, liczyliśmy że w tej sferze zauważymy pewne różnice. Charaktery wykresów korelacji są bardzo podobne. W przypadku rozkładu wartości emocji występujących na miniaturkach możemy zauważyć zbliżone wykresy, aczkolwiek dla filmów trending emocja "happy" pojawia się nieco częściej, w pozostałych nie widać większych różnic. W rozkładzie kategorii widać sporo różnic, najważniejsze z nich:
--wśród filmów trending kategoria muzyka występuje znacznie częściej niż w zbiorze non-trending. 
--kategoria gaming jest znacznie częściej widoczna w zbiorze non-trending
--kategoria sport stanowi większy odsetek w filmach non-trending
--kategoria rozrywka jest reprezentowana w obu zbiorach na podobnym poziomie
+- wśród filmów trending kategoria muzyka występuje znacznie częściej niż w zbiorze non-trending. 
+- kategoria gaming jest znacznie częściej widoczna w zbiorze non-trending
+- kategoria sport stanowi większy odsetek w filmach non-trending
+- kategoria rozrywka jest reprezentowana w obu zbiorach na podobnym poziomie
 - kategoria people & blogs jest mniej reprezentowana w zbiorze trending niż w zbiorze non-trending
 - kategoria comedy znacznie częściej widoczna w grupie trending
 - kategoria film & animation nieco rzadziej widoczna w zbiorze non-trending
 
 ### Klasyfikatory 
 Ze względu na to, że wśród atrybutów, które uwzględniamy ostatecznie dominują te o charakterze liczbowym, zdecydowaliśmy się użyć prostszych algorytmów machine learningowych, dzięki czemu nie ma również problemów z wyjaśnialnością modelów. Uznaliśmy, że porównamy ze sobą skuteczność dwóch klasyfikatorów opartych o metody odpowiednio Random Forest i MLP (Multilayer perceptron). Zbiór danych, ze względu na podobną liczbę przykładów uczących w zbiorach zarówno trending, jak i non-trending, został zwyczajnie połączony, dzięki czemu ominęliśmy problem z niezbalansowanymi danymi. Zbiór został podzielony na część treningową i testową standardową proporcją 80/20. Wyniki klasyfikatorów:
-*Random Forest: 
--precision: 0.76
--recall: 0.76
--f1 score: 0.76
-*MLP: 
--precision: 0.56
--recall: 0.53
--f1 score: 0.51
+
+Random Forest: 
+- precision: 0.76
+- recall: 0.76
+- f1 score: 0.76
+
+MLP: 
+- precision: 0.56
+- recall: 0.53
+- f1 score: 0.51
 
 Klasyfikator w oparciu o Random Forest daje w każdym przypadku lepsze rezultaty, dlatego zdecydowaliśmy się go wybrać jako główny klasyfikator.
 
