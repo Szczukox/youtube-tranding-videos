@@ -311,33 +311,3 @@ plt.show()
 
 # Wypisanie macierzy korelacji
 print(data.corr())
-
-# Zapisanie danych do pliku
-data.to_csv("trending.csv", index=False, sep=";")
-
-# Z całego zbioru danych wybieramy te filmy, które mają opisaną kategorią i mają miniaturkę
-data_with_category = data.loc[data["category"].notnull() & data["average_red"].notna()]
-
-# Wyznaczony zbiór dzielimy na zbiór atrybutów i klas
-features = data_with_category[data_with_category.columns.difference(
-    ["category", "video_id", "first_trending_date", "title", "channel_title", "publish_time", "tags", "thumbnail_link",
-     "description", "country", "last_trending_date"], sort=False)].copy()
-target = data_with_category["category"].copy()
-
-# Wyznaczamy wagi klas dla random forest
-category_dict = data_with_category['category'].value_counts(dropna=True).to_dict()
-max_category_count = max(category_dict.values())
-category_weight = {k: max_category_count / v for k, v in category_dict.items()}
-
-# Tworzymy i trenujemy klasyfikator
-random_forest = RandomForestClassifier(max_depth=10, min_samples_leaf=4, min_samples_split=10, n_estimators=300,
-                                       max_features='auto', class_weight=category_weight, random_state=12)
-x_train, x_test, y_train, y_test = train_test_split(features, target, test_size=0.1, random_state=12)
-random_forest.fit(x_train, y_train)
-y_pred = random_forest.predict(x_test)
-
-# Statystyki klasyfikatora
-print("Classification Report")
-print(classification_report(y_test, y_pred))
-print("Confusion Matrix")
-print(confusion_matrix(y_test, y_pred))
