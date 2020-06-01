@@ -107,6 +107,14 @@ def extract_rms_contrast(image_gray):
     return image_gray.std()
 
 
+def assign_category_from_youtube_api(video_id, category):
+    if str(category) == "nan":
+        values = trending_with_category.loc[trending_with_category["video_id"] == video_id]["category"].values
+        if values.size != 0:
+            return values[0]
+    return category
+
+
 # Załadowanie danych z pliku
 data_GB = pd.read_csv("GB_videos_5p.csv", delimiter=';', encoding='latin1')
 data_US = pd.read_csv("US_videos_5p.csv", delimiter=';')
@@ -195,6 +203,11 @@ data['category_id'].replace(category_mapping, inplace=True)
 
 # W związku z zastąpieniem ID kategorii przez jej nazwę to zmiana nazwy atrybutu
 data = data.rename(columns={"category_id": "category"})
+
+# Przypisanie kategorii z Youtube API dla tych filmów, które miały pustą kategorię
+trending_with_category = pd.read_csv("trending_with_category.csv", sep=";")
+data["category"] = data\
+    .apply(lambda row: assign_category_from_youtube_api(row["video_id"], row["category"]), axis=1)
 
 # Rysowanie wykresu obrazującego rozkład kategorii wśród video z przypisanymi kategoriami
 category_count_plot = sns.countplot(x='category', data=data)
