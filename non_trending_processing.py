@@ -218,6 +218,3 @@ plt.show()
 
 # Wypisanie macierzy korelacji
 print(data.corr())
-
-# Zapisanie danych do pliku
-data.to_csv("non_trending.csv", index=False, sep=";")
