@@ -11,7 +11,7 @@ import seaborn as sns
 
 # Funkcja obliczająca liczbę tagów z atrybutu tags
 def tags_to_number_of_tags(tags):
-    return 0 if tags == "[none]" else len(str(tags).split(sep='|'))
+    return 0 if tags == "[none]" else len(str(tags).split(sep=', '))
 
 
 # Funkcja pomocnicza do wykresu liczba video z przypisaną kategorią vs liczba video bez przypisanej kategorii
