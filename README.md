@@ -190,3 +190,37 @@ Korelacje views/likes/comment count od miesiąca publikacji również nie ujawni
 - W poprzednim etapie niefortunnie nie wykorzystaliśmy uczenia pół-nadzorowanego, ale pobraliśmy ground truth dla całego zbioru, by sprawdzić jak radzi sobie faktycznie stworzony klasyfikator, a także by móc porównać różnice w rozkładzie kategorii. Uzyskaliśmy trafność na poziomie 32%. Wartości precision i recall otrzymano na poziomie odpowiednio 0.31 i 0.32.
 
 - Ze względu na ograniczone dzienne możliwości zapytań Youtube API musieliśmy w dość efektywny sposób wysyłać zapytania o related videos dla poszczególnych filmików ze zbioru trending o określonym video_id. Dlatego w końcowym zbiorze znajdują się filmiki będące "related" do około 1000 filmików ze zbioru trending (na jeden trending filmik przypadało zapytanie o 50 najbardziej zbliżonych filmików). Z tego powodu rozkłady wartości dla poszczególnych atrybutów być może różnią się nieznacznie od tego, co moglibyśmy uzyskać wysyłając zapytania np. o 5 najbardziej zbliżonych filmików dla wszystkich 8600 filmów. Liczymy, że pomimo to Youtube zapewni wystarczającą różnorodność danych dzięki zaawansowanym algorytmom szukania i bogatej bazie filmików.
+
+## Etap 6
+
+### Porównanie różnic wartości atrybutów w zbiorach trending i non-trending
+Porównując liczbę tagów widzimy, że filmiki trending mają ich nieco więcej, średnio około 19, podczas gdy non-trending mają tę wartość bliżej 17, co oczywiście nie stanowi zbyt dużej różnicy i może to być kwestia wariancji z powodu niedostatecznie dużych zbiorów danych.
+Rozkład liczby linków jest dość zbliżony, aczkolwiek średnia w przypadku filmików trending jest nieznacznie wyższa (około 2-3)
+Jeśli chodzi o długość tytułu, to filmiki trending miały go średnio krótszy o około 5 znaków. W przypadku długości opisu różnica jest pomijalnie mała.
+W przypadku miesiąca publikacji rozkład jest podobny (takie było zamierzenie), jedynie dla grudnia liczba filmów non-trending jest sporo większa od trending.
+W przypadku liczby wyświetleń filmy non-trending zdają się mieć ich średnio nieco więcej. Być może wynika to z tego, w jaki sposób Youtube pokazuje related videos. Prawdopodobnie faworyzowane są filmy z większą liczbą wyświetleń.
+Liczba lajków jest średnio trochę większa przy filmach trending. Liczba komentarzy ma podobny rozkład wartości dla obu wersji. Zaskakująco rozkład kolorów pikseli dla obu zbiorów jest bardzo zbliżony, liczyliśmy że w tej sferze zauważymy pewne różnice. Charaktery wykresów korelacji są bardzo podobne. W przypadku rozkładu wartości emocji występujących na miniaturkach możemy zauważyć zbliżone wykresy, aczkolwiek dla filmów trending emocja "happy" pojawia się nieco częściej, w pozostałych nie widać większych różnic. W rozkładzie kategorii widać sporo różnic, najważniejsze z nich:
+-wśród filmów trending kategoria muzyka występuje znacznie częściej niż w zbiorze non-trending. 
+-kategoria gaming jest znacznie częściej widoczna w zbiorze non-trending
+-kategoria sport stanowi większy odsetek w filmach non-trending
+-kategoria rozrywka jest reprezentowana w obu zbiorach na podobnym poziomie
+- kategoria people & blogs jest mniej reprezentowana w zbiorze trending niż w zbiorze non-trending
+- kategoria comedy znacznie częściej widoczna w grupie trending
+- kategoria film & animation nieco rzadziej widoczna w zbiorze non-trending
+
+### Klasyfikatory 
+Ze względu na to, że wśród atrybutów, które uwzględniamy ostatecznie dominują te o charakterze liczbowym, zdecydowaliśmy się użyć prostszych algorytmów machine learningowych, dzięki czemu nie ma również problemów z wyjaśnialnością modelów. Uznaliśmy, że porównamy ze sobą skuteczność dwóch klasyfikatorów opartych o metody odpowiednio Random Forest i MLP (Multilayer perceptron). Zbiór danych, ze względu na podobną liczbę przykładów uczących w zbiorach zarówno trending, jak i non-trending, został zwyczajnie połączony, dzięki czemu ominęliśmy problem z niezbalansowanymi danymi. Zbiór został podzielony na część treningową i testową standardową proporcją 80/20. Wyniki klasyfikatorów:
+*Random Forest: 
+-precision: 0.76
+-recall: 0.76
+-f1 score: 0.76
+*MLP: 
+-precision: 0.56
+-recall: 0.53
+-f1 score: 0.51
+
+Klasyfikator w oparciu o Random Forest daje w każdym przypadku lepsze rezultaty, dlatego zdecydowaliśmy się go wybrać jako główny klasyfikator.
+
+
+### Wnioski i wiedza dla klienta
+W przypadku wiedzy dla klienta, należy mieć na uwadze, że wnioski są niestety dość okrojone z powodu nieumiejętnego wyboru atrybutów (w szczególności pominięcie analizy wartości tekstowych z użyciem odpowiednich modeli). Wszelkie różnice, które zaobserwowaliśmy w statystykach filmów nie są szczególnie przydatne, jako że są efektem wrzuconego do sieci filmiku, tak więc należy się skupić jedynie na atrybutach, na które ma się wpływ jeszcze przed finalną fazą wypuszczania materiału. Liczyliśmy, że zobaczymy pewne różnice w rozkładzie wartości kolorów występujących w miniaturkach, są one jednak bardzo podobne. Najwięcej informacji udało się wydobyć porównując rozkłady wartości kategorii filmików w obu zbiorach. Najważniejsze różnice jakie zaobserwowaliśmy to przewaga filmików typu gaming w zbiorze non-trending oraz fakt, że kategorie komedia i muzyka stanowiły dużo większy odsetek kategorii wśród filmów trending. Podsumowując, najważniejsze informacje, które udało nam się wydobyć sugerują, aby klient starał się wykorzystać muzyczną strefę youtube'a (nawet jeśli, jego materiały nie byłyby normalnie z tym związane, to mógłby od czasu do czasu nagrać np. jakąś muzyczną parodię - co statystycznie powinno mieć większe szanse powodzenia ze względu na większą reprezentację filmów typu comedy w zbiorze trending. Dodatkowo warto mieć na uwadze, że pozytywne emocje i radość widoczna na miniaturkach również powinna zwiększyć szanse na dostanie się do zakładki trending videos. Istnieje spora szansa, że lepiej unikać tworzenia filmików z kategorii gaming.
