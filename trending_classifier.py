@@ -1,37 +1,8 @@
 import pandas as pd
-import numpy as np
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
-
-
-def print_decision_rules(rf):
-    for tree_idx, est in enumerate(rf.estimators_):
-        tree = est.tree_
-        assert tree.value.shape[1] == 1  # no support for multi-output
-
-        print('TREE: {}'.format(tree_idx))
-
-        iterator = enumerate(zip(tree.children_left, tree.children_right, tree.feature, tree.threshold, tree.value))
-        for node_idx, data in iterator:
-            left, right, feature, th, value = data
-
-            # left: index of left child (if any)
-            # right: index of right child (if any)
-            # feature: index of the feature to check
-            # th: the threshold to compare against
-            # value: values associated with classes
-
-            # for classifier, value is 0 except the index of the class to return
-            class_idx = np.argmax(value[0])
-
-            if left == -1 and right == -1:
-                print('{} LEAF: return class={}'.format(node_idx, class_idx))
-            else:
-                print(
-                    '{} NODE: if feature[{}] < {} then next={} else next={}'.format(node_idx, feature, th, left, right))
-
 
 # Załadowanie danych
 trending = pd.read_csv("trending.csv", sep=";")
@@ -78,5 +49,3 @@ print("Classification Report")
 print(classification_report(y_test, y_pred))
 print("Confusion Matrix")
 print(confusion_matrix(y_test, y_pred))
-
-# print_decision_rules(random_forest)
